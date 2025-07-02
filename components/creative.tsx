@@ -432,8 +432,6 @@ export function DesignaliCreative() {
   const [showReportModal, setShowReportModal] = useState(false) // Novo estado para o modal de relatório
   // Add state for the temperature filter
   const [temperaturaFilter, setTemperaturaFilter] = useState("")
-  const [sortField, setSortField] = useState("")
-  const [sortDirection, setSortDirection] = useState("asc")
 
   const [leadsList, setLeadsList] = useState([
     {
@@ -562,39 +560,6 @@ export function DesignaliCreative() {
 
     return matchesSearch && matchesStatus && matchesSource && matchesTemperatura
   })
-
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
-  }
-
-  const sortedLeads = [...filteredLeads].sort((a, b) => {
-    if (!sortField) return 0
-
-    let aValue: any = (a as any)[sortField]
-    let bValue: any = (b as any)[sortField]
-
-    if (sortField === "orcamento") {
-      aValue = Number(aValue)
-      bValue = Number(bValue)
-    }
-
-    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
-    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
-    return 0
-  })
-
-  const handleDeleteLead = (lead: any) => {
-    if (window.confirm(`Tem certeza que deseja deletar o lead ${lead.nome}?`)) {
-      setLeadsList((prev) => prev.filter((l) => l.id !== lead.id))
-      setNotification(`Lead ${lead.nome} foi removido com sucesso!`)
-      setTimeout(() => setNotification(""), 3000)
-    }
-  }
 
   // Simulate progress loading
   useEffect(() => {
@@ -736,6 +701,14 @@ export function DesignaliCreative() {
       })
 
       // Limpar notificação após 3 segundos
+      setTimeout(() => setNotification(""), 3000)
+    }
+  }
+
+  const handleDeleteLead = (lead: any) => {
+    if (window.confirm(`Tem certeza que deseja deletar o lead ${lead.nome}?`)) {
+      setLeadsList((prev) => prev.filter((l) => l.id !== lead.id))
+      setNotification(`Lead ${lead.nome} foi removido com sucesso!`)
       setTimeout(() => setNotification(""), 3000)
     }
   }
@@ -1912,38 +1885,23 @@ export function DesignaliCreative() {
                               <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                   <tr>
-                                    <th
-                                      onClick={() => handleSort("nome")}
-                                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    >
-                                      Nome {sortField === "nome" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      Nome
                                     </th>
-                                    <th
-                                      onClick={() => handleSort("email")}
-                                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    >
-                                      Email {sortField === "email" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      Email
                                     </th>
-                                    <th
-                                      onClick={() => handleSort("telefone")}
-                                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    >
-                                      Telefone {sortField === "telefone" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      Telefone
                                     </th>
-                                    <th
-                                      onClick={() => handleSort("fonte")}
-                                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    >
-                                      Fonte {sortField === "fonte" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      Fonte
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                       Status
                                     </th>
-                                    <th
-                                      onClick={() => handleSort("data")}
-                                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                    >
-                                      Data {sortField === "data" && (sortDirection === "asc" ? "↑" : "↓")}
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      Data
                                     </th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                       Ações
@@ -1951,7 +1909,7 @@ export function DesignaliCreative() {
                                   </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                  {sortedLeads.map((lead) => (
+                                  {leadsList.map((lead) => (
                                     <tr key={lead.id}>
                                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {lead.nome}
@@ -2094,29 +2052,17 @@ export function DesignaliCreative() {
                           <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                               <tr>
-                                <th
-                                  onClick={() => handleSort("nome")}
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                >
-                                  Nome {sortField === "nome" && (sortDirection === "asc" ? "↑" : "↓")}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Nome
                                 </th>
-                                <th
-                                  onClick={() => handleSort("email")}
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                >
-                                  Email {sortField === "email" && (sortDirection === "asc" ? "↑" : "↓")}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Email
                                 </th>
-                                <th
-                                  onClick={() => handleSort("telefone")}
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                >
-                                  Telefone {sortField === "telefone" && (sortDirection === "asc" ? "↑" : "↓")}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Telefone
                                 </th>
-                                <th
-                                  onClick={() => handleSort("fonte")}
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                >
-                                  Fonte {sortField === "fonte" && (sortDirection === "asc" ? "↑" : "↓")}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Fonte
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Tipo de Interesse
@@ -2124,20 +2070,14 @@ export function DesignaliCreative() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   QUALIFICAÇÃO
                                 </th>
-                                <th
-                                  onClick={() => handleSort("orcamento")}
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                >
-                                  Orçamento {sortField === "orcamento" && (sortDirection === "asc" ? "↑" : "↓")}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Orçamento
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Status
                                 </th>
-                                <th
-                                  onClick={() => handleSort("data")}
-                                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                >
-                                  Data {sortField === "data" && (sortDirection === "asc" ? "↑" : "↓")}
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Data
                                 </th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Ações
@@ -2145,7 +2085,7 @@ export function DesignaliCreative() {
                               </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
-                              {sortedLeads.map((lead) => (
+                              {filteredLeads.map((lead) => (
                                 <tr key={lead.id} className="hover:bg-gray-50">
                                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {lead.nome}
@@ -2290,6 +2230,46 @@ export function DesignaliCreative() {
                                   <div
                                     key={lead.id}
                                     className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm"
+                                  >
+                                    <div className="mb-2 flex items-center">
+                                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
+                                        {lead.nome.charAt(0).toUpperCase()}
+                                        {lead.nome.split(" ").length > 1
+                                          ? lead.nome.split(" ")[1].charAt(0).toUpperCase()
+                                          : ""}
+                                      </span>
+                                      <span className="text-sm font-medium">{lead.nome}</span>
+                                    </div>
+                                    <p className="mb-2 text-xs text-gray-500">{lead.tipoInteresse}</p>
+                                    <p className="text-sm font-semibold text-green-600">
+                                      {lead.orcamento.toLocaleString("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      })}
+                                    </p>
+                                    {lead.observacoes && (
+                                      <div className="mt-2 text-xs text-gray-600">{lead.observacoes}</div>
+                                    )}
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+
+                          {/* Coluna 2: Qualificados */}
+                          <div className="bg-blue-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-4">
+                              <h4 className="font-medium text-blue-900">Qualificados</h4>
+                              <span className="bg-blue-200 text-blue-700 text-xs px-2 py-1 rounded-full">
+                                {leadsList.filter((l) => l.status === "Qualificado").length}
+                              </span>
+                            </div>
+                            <div className="space-y-3">
+                              {leadsList
+                                .filter((l) => l.status === "Qualificado")
+                                .map((lead) => (
+                                  <div
+                                    key={lead.id}
+                                    className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm"
                                   >
                                     <div className="mb-2 flex items-center">
                                       <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
