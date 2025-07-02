@@ -660,6 +660,7 @@ export function DesignaliCreative() {
     }))
   }
 
+  // Placeholder for handleUpdateLead - will be implemented in the next step
   const handleUpdateLead = () => {
     if (leadFormData.nome && leadFormData.email && selectedLead) {
       // Atualizar o lead na lista
@@ -694,21 +695,13 @@ export function DesignaliCreative() {
         email: "",
         telefone: "",
         fonte: "",
-        tipoInteresse: "",
+        tipoInterinteresse: "",
         temperatura: "",
         orcamento: "",
         observacoes: "",
       })
 
       // Limpar notificação após 3 segundos
-      setTimeout(() => setNotification(""), 3000)
-    }
-  }
-
-  const handleDeleteLead = (lead: any) => {
-    if (window.confirm(`Tem certeza que deseja deletar o lead ${lead.nome}?`)) {
-      setLeadsList((prev) => prev.filter((l) => l.id !== lead.id))
-      setNotification(`Lead ${lead.nome} foi removido com sucesso!`)
       setTimeout(() => setNotification(""), 3000)
     }
   }
@@ -1942,12 +1935,6 @@ export function DesignaliCreative() {
                                             Editar
                                           </button>
                                           <button
-                                            onClick={() => handleDeleteLead(lead)}
-                                            className="text-red-600 hover:text-red-800"
-                                          >
-                                            Deletar
-                                          </button>
-                                          <button
                                             onClick={() => handleCallLead(lead)}
                                             className="text-green-600 hover:text-green-800"
                                           >
@@ -2163,12 +2150,6 @@ export function DesignaliCreative() {
                                         className="text-green-600 hover:text-green-800"
                                       >
                                         Editar
-                                      </button>
-                                      <button
-                                        onClick={() => handleDeleteLead(lead)}
-                                        className="text-red-600 hover:text-red-800"
-                                      >
-                                        Deletar
                                       </button>
                                       <button
                                         onClick={() => handleCallLead(lead)}
