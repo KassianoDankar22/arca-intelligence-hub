@@ -44,10 +44,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Progress } from "@/components/ui/progress"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -1028,32 +1026,22 @@ export function DesignaliCreative() {
             <div className="flex items-center gap-3">
               <ThemeToggle />
 
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-2xl">
-                      <MessageSquare className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Messages</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div title="Messages">
+                <Button variant="ghost" size="icon" className="rounded-2xl">
+                  <MessageSquare className="h-5 w-5" />
+                </Button>
+              </div>
 
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-2xl relative">
-                      <Bell className="h-5 w-5" />
-                      {notifications > 0 && (
-                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                          {notifications}
-                        </span>
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Notifications</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div title="Notifications">
+                <Button variant="ghost" size="icon" className="rounded-2xl relative">
+                  <Bell className="h-5 w-5" />
+                  {notifications > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                      {notifications}
+                    </span>
+                  )}
+                </Button>
+              </div>
 
               <Avatar className="h-9 w-9 border-2 border-primary">
                 <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
@@ -1257,7 +1245,12 @@ export function DesignaliCreative() {
                                   <span>Progress</span>
                                   <span>{project.progress}%</span>
                                 </div>
-                                <Progress value={project.progress} className="h-2 rounded-xl" />
+                                <div className="w-full h-2 bg-gray-200 rounded-full">
+                                  <div
+                                    className="h-2 bg-blue-500 rounded-full"
+                                    style={{ width: `${project.progress}%` }}
+                                  ></div>
+                                </div>
                               </div>
                               <div className="flex items-center justify-between mt-3 text-sm text-muted-foreground">
                                 <div className="flex items-center">
@@ -1688,7 +1681,9 @@ export function DesignaliCreative() {
                                     </div>
                                     <div className="text-right">
                                       <p className="font-semibold">$890K</p>
-                                      <Progress value={75} className="w-20 h-2" />
+                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "75%" }}></div>
+                                      </div>
                                     </div>
                                   </div>
 
@@ -1699,7 +1694,9 @@ export function DesignaliCreative() {
                                     </div>
                                     <div className="text-right">
                                       <p className="font-semibold">$650K</p>
-                                      <Progress value={60} className="w-20 h-2" />
+                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "60%" }}></div>
+                                      </div>
                                     </div>
                                   </div>
 
@@ -1710,7 +1707,9 @@ export function DesignaliCreative() {
                                     </div>
                                     <div className="text-right">
                                       <p className="font-semibold">$420K</p>
-                                      <Progress value={45} className="w-20 h-2" />
+                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "45%" }}></div>
+                                      </div>
                                     </div>
                                   </div>
 
@@ -1721,7 +1720,9 @@ export function DesignaliCreative() {
                                     </div>
                                     <div className="text-right">
                                       <p className="font-semibold">$280K</p>
-                                      <Progress value={30} className="w-20 h-2" />
+                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "30%" }}></div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
