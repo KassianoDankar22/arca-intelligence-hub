@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ✅ Fundo base ajustado para branco puro */
+    --background: 0 0% 100%; /* hsl(0, 0%, 100%) é #FFFFFF */
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%; /* Pode ser ajustado se necessário para contraste com branco puro */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%; /* Pode ser ajustado se necessário */
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%; /* Pode ser ajustado se necessário */
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%; /* Pode ser ajustado se necessário */
+    --input: 214.3 31.8% 91.4%; /* Pode ser ajustado se necessário */
+    --ring: 222.2 47.4% 11.2%;
+    --radius: 0.75rem;
+
+    /* Cores para o RainbowButton */
+    --color-1: 0 100% 63%;
+    --color-2: 270 100% 63%;
+    --color-3: 210 100% 63%;
+    --color-4: 195 100% 63%;
+    --color-5: 90 100% 63%;
+  }
+
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 210 20% 98%;
+    --primary-foreground: 220.9 39.3% 11%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 216 12.2% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+}
+
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@layer components {
+  .gradient-button {
+    @apply relative appearance-none cursor-pointer;
+    background: radial-gradient(
+      var(--spread-x, 150%) var(--spread-y, 180%) at var(--pos-x, 50%) var(--pos-y, 50%),
+      /* Novas cores azuis para o estado padrão */
+      var(--color-1, #000e3f) var(--stop-1, 0%),
+      var(--color-2, #00308f) var(--stop-2, 10%) /* Azul escuro termina mais cedo */,
+      var(--color-3, #007bff) var(--stop-3, 30%),
+      var(--color-4, #66b2ff) var(--stop-4, 60%),
+      var(--color-5, #b3daff) var(--stop-5, 100%)
+    );
+    transition:
+      --pos-x 0.6s ease-in-out,
+      --pos-y 0.6s ease-in-out,
+      --spread-x 0.6s ease-in-out,
+      --spread-y 0.6s ease-in-out,
+      --color-1 0.6s ease-in-out,
+      --color-2 0.6s ease-in-out,
+      --color-3 0.6s ease-in-out,
+      --color-4 0.6s ease-in-out,
+      --color-5 0.6s ease-in-out,
+      --border-angle 0.6s ease-in-out,
+      --border-color-1 0.6s ease-in-out,
+      --border-color-2 0.6s ease-in-out,
+      --stop-1 0.6s ease-in-out,
+      --stop-2 0.6s ease-in-out,
+      --stop-3 0.6s ease-in-out,
+      --stop-4 0.6s ease-in-out,
+      --stop-5 0.6s ease-in-out;
+  }
+
+  .gradient-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      var(--border-angle, 200deg),
+      /* Cores da borda baseadas na nova paleta */
+      var(--border-color-1, rgba(0, 123, 255, 0.2)),
+      var(--border-color-2, rgba(0, 123, 255, 0.6))
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gradient-button:hover {
+    --pos-x: 0%; /* Desloca a posição para a esquerda */
+    --pos-y: 90%; /* Desloca a posição para baixo */
+    --spread-x: 160%; /* Aumenta o espalhamento para um visual mais dinâmico */
+    --spread-y: 200%;
+    /* Mantém as mesmas cores base, mas ajusta os stops para fazer a luz "mover" */
+    --color-1: #000e3f;
+    --color-2: #00308f;
+    --color-3: #007bff;
+    --color-4: #66b2ff;
+    --color-5: #b3daff;
+
+    --border-angle: 190deg; /* Mudança sutil no ângulo da borda */
+    --border-color-1: rgba(0, 123, 255, 0.1); /* Borda mais clara no hover */
+    --border-color-2: rgba(0, 123, 255, 0.4);
+
+    /* Ajusta os stops para fazer o gradiente "fluir" */
+    --stop-1: 5%;
+    --stop-2: 20%;
+    --stop-3: 45%;
+    --stop-4: 80%;
+    --stop-5: 95%;
+  }
+
+  .gradient-button-variant {
+    /* Aplica a nova paleta de cores também para a variante */
+    --color-1: #000e3f;
+    --color-2: #00308f;
+    --color-3: #007bff;
+    --color-4: #66b2ff;
+    --color-5: #b3daff;
+    --border-angle: 200deg;
+    --border-color-1: rgba(0, 123, 255, 0.3);
+    --border-color-2: rgba(0, 123, 255, 0.6);
+    --stop-1: 0%;
+    --stop-2: 20%;
+    --stop-3: 50%;
+    --stop-4: 80%;
+    --stop-5: 100%;
+  }
+
+  .custom-file-upload-button {
+    border: none;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: #475569; /* Changed to slate-600 */
+    color: #ffffff;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(71, 85, 105, 0.19), 0 2px 4px -1px rgba(71, 85, 105, 0.09); /* Updated shadow */
+    transition: all 0.6s ease;
+  }
+
+  .custom-file-upload-button:hover {
+    box-shadow: 0 10px 15px -3px rgba(71, 85, 105, 0.31), 0 4px 6px -2px rgba(71, 85, 105, 0.09); /* Updated shadow */
+  }
+
+  .custom-file-upload-button:focus,
+  .custom-file-upload-button:active {
+    opacity: 0.85;
+    box-shadow: none;
+  }
+
+  .custom-file-upload-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
