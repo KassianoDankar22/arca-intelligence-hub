@@ -662,48 +662,12 @@ export function DesignaliCreative() {
 
   // Placeholder for handleUpdateLead - will be implemented in the next step
   const handleUpdateLead = () => {
-    if (leadFormData.nome && leadFormData.email && selectedLead) {
-      // Atualizar o lead na lista
-      setLeadsList((prev) =>
-        prev.map((lead) =>
-          lead.id === selectedLead.id
-            ? {
-                ...lead,
-                nome: leadFormData.nome,
-                email: leadFormData.email,
-                telefone: leadFormData.telefone,
-                fonte: leadFormData.fonte,
-                tipoInteresse: leadFormData.tipoInteresse,
-                temperatura: leadFormData.temperatura,
-                orcamento: Number.parseFloat(leadFormData.orcamento.replace(/[^0-9.]/g, "")) || 0,
-                observacoes: leadFormData.observacoes,
-              }
-            : lead,
-        ),
-      )
-
-      // Mostrar notificação de sucesso
-      setNotification(`Lead ${leadFormData.nome} atualizado com sucesso!`)
-
-      // Fechar modal
-      setShowLeadModal(false)
-
-      // Limpar dados
-      setSelectedLead(null)
-      setLeadFormData({
-        nome: "",
-        email: "",
-        telefone: "",
-        fonte: "",
-        tipoInterinteresse: "",
-        temperatura: "",
-        orcamento: "",
-        observacoes: "",
-      })
-
-      // Limpar notificação após 3 segundos
-      setTimeout(() => setNotification(""), 3000)
-    }
+    console.log("Update Lead function will be implemented next!")
+    // Logic to update the lead in leadsList
+    // setLeadsList((prev) => prev.map((lead) => (lead.id === selectedLead.id ? { ...lead, ...leadFormData } : lead)));
+    // setShowLeadModal(false);
+    // setNotification(`Lead ${selectedLead.nome} atualizado com sucesso!`);
+    // setTimeout(() => setNotification(""), 3000);
   }
 
   return (
