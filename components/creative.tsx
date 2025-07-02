@@ -3056,98 +3056,164 @@ export function DesignaliCreative() {
 }
 
 {
-  /* Modal Relatório */
+  /* Modal de Relatório */
 }
 {
   showReportModal && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="mx-4 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-xl font-semibold">Relatório CRM</h3>
-          <Button variant="ghost" size="icon" onClick={() => setShowReportModal(false)} className="rounded-full">
-            <X className="h-4 w-4" />
-          </Button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-2xl font-bold text-gray-900">Relatório de Leads</h3>
+          <button onClick={() => setShowReportModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl">
+            ✕
+          </button>
         </div>
 
-        {/* Dados do Relatório */}
-        <div className="space-y-4">
-          {/* Total de Leads */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">Total de Leads</span>
-            <span className="text-lg font-semibold">{generateReportData().totalLeads}</span>
-          </div>
-
-          {/* Leads por Status */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-600">Leads por Status</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(generateReportData().leadsPorStatus).map(([status, count]) => (
-                <div key={status} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{status}</span>
-                  <span className="text-sm font-medium">{count}</span>
+        {(() => {
+          const reportData = generateReportData()
+          return (
+            <div className="space-y-6">
+              {/* Resumo Geral */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-blue-600">{reportData.totalLeads}</div>
+                  <div className="text-sm text-blue-800">Total de Leads</div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Leads por Fonte */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-600">Leads por Fonte</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(generateReportData().leadsPorFonte).map(([fonte, count]) => (
-                <div key={fonte} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{fonte}</span>
-                  <span className="text-sm font-medium">{count}</span>
+                <div className="bg-green-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-green-600">{reportData.leadsPorStatus.fechado}</div>
+                  <div className="text-sm text-green-800">Vendas Fechadas</div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Leads por Temperatura */}
-          <div>
-            <h4 className="text-sm font-medium text-gray-600">Leads por Qualificação</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {Object.entries(generateReportData().leadsPorTemperatura).map(([temperatura, count]) => (
-                <div key={temperatura} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{temperatura}</span>
-                  <span className="text-sm font-medium">{count}</span>
+                <div className="bg-yellow-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-yellow-600">{reportData.taxaConversao}%</div>
+                  <div className="text-sm text-yellow-800">Taxa de Conversão</div>
                 </div>
-              ))}
+                <div className="bg-purple-50 p-4 rounded-lg text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    R$ {reportData.valorMedio.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}
+                  </div>
+                  <div className="text-sm text-purple-800">Ticket Médio</div>
+                </div>
+              </div>
+
+              {/* Leads por Status */}
+              <div className="bg-white border rounded-lg p-6">
+                <h4 className="text-lg font-semibold mb-4">Distribuição por Status</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span>Novos:</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-32 h-3 bg-gray-200 rounded-full">
+                        <div
+                          className="h-3 bg-blue-500 rounded-full"
+                          style={{ width: `${(reportData.leadsPorStatus.novo / reportData.totalLeads) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="font-medium">{reportData.leadsPorStatus.novo}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Qualificados:</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-32 h-3 bg-gray-200 rounded-full">
+                        <div
+                          className="h-3 bg-green-500 rounded-full"
+                          style={{
+                            width: `${(reportData.leadsPorStatus.qualificado / reportData.totalLeads) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <span className="font-medium">{reportData.leadsPorStatus.qualificado}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Propostas:</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-32 h-3 bg-gray-200 rounded-full">
+                        <div
+                          className="h-3 bg-yellow-500 rounded-full"
+                          style={{
+                            width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <span className="font-medium">{reportData.leadsPorStatus.proposta}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Fechados:</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-32 h-3 bg-gray-200 rounded-full">
+                        <div
+                          className="h-3 bg-emerald-500 rounded-full"
+                          style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
+                        ></div>
+                      </div>
+                      <span className="font-medium">{reportData.leadsPorStatus.fechado}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Leads por Fonte */}
+              <div className="bg-white border rounded-lg p-6">
+                <h4 className="text-lg font-semibold mb-4">Leads por Fonte</h4>
+                <div className="space-y-2">
+                  {Object.entries(reportData.leadsPorFonte).map(([fonte, quantidade]) => (
+                    <div key={fonte} className="flex justify-between items-center">
+                      <span>{fonte}:</span>
+                      <span className="font-medium">{quantidade} leads</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Leads por Qualificação */}
+              <div className="bg-white border rounded-lg p-6">
+                <h4 className="text-lg font-semibold mb-4">Leads por Qualificação</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>🔥 Quente:</span>
+                    <span className="font-medium">{reportData.leadsPorTemperatura.quente} leads</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>🌡️ Morno:</span>
+                    <span className="font-medium">{reportData.leadsPorTemperatura.morno} leads</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>❄️ Frio:</span>
+                    <span className="font-medium">{reportData.leadsPorTemperatura.frio} leads</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Valor Total */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="text-center">
+                  <div className="text-sm text-gray-600">Valor Total do Pipeline</div>
+                  <div className="text-3xl font-bold text-gray-900">
+                    R$ {reportData.valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Botões de Ação */}
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => window.print()}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Imprimir Relatório
+                </button>
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* Valor Total */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">Valor Total</span>
-            <span className="text-lg font-semibold">
-              {generateReportData().valorTotal.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-          </div>
-
-          {/* Valor Médio */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">Valor Médio</span>
-            <span className="text-lg font-semibold">
-              {generateReportData().valorMedio.toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-          </div>
-
-          {/* Taxa de Conversão */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-600">Taxa de Conversão</span>
-            <span className="text-lg font-semibold">{generateReportData().taxaConversao}%</span>
-          </div>
-        </div>
-
-        <div className="mt-6 flex justify-end">
-          <Button onClick={() => setShowReportModal(false)}>Fechar</Button>
-        </div>
+          )
+        })()}
       </div>
     </div>
   )
