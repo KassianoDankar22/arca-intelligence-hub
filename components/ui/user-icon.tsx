@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import type { Variants } from "framer-motion"
+import { User } from "lucide-react"
+import type { Transition, Variants } from "framer-motion"
 import { motion, useAnimation } from "framer-motion"
 import type { HTMLAttributes } from "react"
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react"
@@ -16,25 +17,19 @@ interface UserIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number
 }
 
-const pathVariant: Variants = {
-  normal: { pathLength: 1, opacity: 1, pathOffset: 0 },
-  animate: {
-    pathLength: [0, 1],
-    opacity: [0, 1],
-    pathOffset: [1, 0],
-  },
+const defaultTransition: Transition = {
+  duration: 0.6,
+  opacity: { duration: 0.2 },
 }
 
-const circleVariant: Variants = {
+const pathVariants: Variants = {
   normal: {
     pathLength: 1,
-    pathOffset: 0,
-    scale: 1,
+    opacity: 1,
   },
   animate: {
+    opacity: [0, 1],
     pathLength: [0, 1],
-    pathOffset: [1, 0],
-    scale: [0.5, 1],
   },
 }
 
@@ -73,9 +68,11 @@ const UserIcon = forwardRef<UserIconHandle, UserIconProps>(
       },
       [controls, onMouseLeave],
     )
+
     return (
       <div className={cn(className)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
-        <svg
+        <User
+          {...props}
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -86,18 +83,21 @@ const UserIcon = forwardRef<UserIconHandle, UserIconProps>(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <motion.circle cx="12" cy="8" r="5" animate={controls} variants={circleVariant} />
-
           <motion.path
-            d="M20 21a8 8 0 0 0-16 0"
-            variants={pathVariant}
-            transition={{
-              delay: 0.2,
-              duration: 0.4,
-            }}
+            d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+            variants={pathVariants}
+            transition={defaultTransition}
             animate={controls}
           />
-        </svg>
+          <motion.circle
+            cx="12"
+            cy="7"
+            r="4"
+            variants={pathVariants}
+            transition={defaultTransition}
+            animate={controls}
+          />
+        </User>
       </div>
     )
   },

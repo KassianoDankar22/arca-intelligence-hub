@@ -20,7 +20,6 @@ import {
   Menu,
   MessageSquare,
   MessageCircle,
-  MessageCircleMoreIcon,
   Palette,
   PanelLeft,
   Search,
@@ -385,7 +384,7 @@ const sidebarItems = [
   },
   {
     title: "Arca AI Chat",
-    icon: <MessageCircleMoreIcon />,
+    icon: <MessageCircle />,
     tabValue: "files", // Corresponds to the "files" tab
   },
   {
@@ -1097,7 +1096,7 @@ export function DesignaliCreative() {
               <div className="hidden md:flex gap-2">
                 {activeTab === "files" && ( // Add this conditional rendering
                   <StarBorder as="button" onClick={() => setActiveTab("files")} className="" color="#3B82F6">
-                    <MessageCircleMoreIcon className="mr-2 h-4 w-4" />
+                    <MessageCircle className="mr-2 h-4 w-4" />
                     Histórico do Chat
                   </StarBorder>
                 )}
