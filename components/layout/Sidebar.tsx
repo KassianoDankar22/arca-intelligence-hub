@@ -26,6 +26,7 @@ interface SidebarProps {
   favoriteAgentsCount: number
   setShowRoiTool: (show: boolean) => void
   activeRoiView: "agents" | "my-rois" | "favorites" // Declare the variable here
+  setActiveRoiView: (value: "agents" | "my-rois" | "favorites") => void
 }
 
 export function Sidebar({
@@ -39,6 +40,7 @@ export function Sidebar({
   favoriteAgentsCount,
   setShowRoiTool,
   activeRoiView, // Use the variable here
+  setActiveRoiView,
 }: SidebarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAgentsOpen, setIsAgentsOpen] = useState(true)
@@ -82,6 +84,7 @@ export function Sidebar({
 
   const handleNavigateToAgentView = (view: "agents" | "my-rois" | "favorites") => {
     setActiveTab("apps")
+    setActiveRoiView(view)
   }
 
   return (
