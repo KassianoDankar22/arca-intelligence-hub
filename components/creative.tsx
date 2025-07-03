@@ -3507,7 +3507,7 @@ Seu Corretor`}
       {/* Modal Novo Compromisso */}
       {showNewAppointmentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div className="mx-4 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
               <h3 className="text-xl font-semibold">Novo Compromisso</h3>
               <Button
@@ -3520,33 +3520,96 @@ Seu Corretor`}
               </Button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Primeira linha - Título e Tipo */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Título do compromisso</label>
+                  <Input
+                    type="text"
+                    className="rounded-xl"
+                    placeholder="Ex: Reunião com Cliente"
+                    value={newAppointmentTitle}
+                    onChange={(e) => setNewAppointmentTitle(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Tipo de Compromisso</label>
+                  <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Selecione o tipo</option>
+                    <option value="reuniao">📋 Reunião</option>
+                    <option value="visita">🏠 Visita</option>
+                    <option value="ligacao">📞 Ligação</option>
+                    <option value="followup">🔄 Follow-up</option>
+                    <option value="apresentacao">📊 Apresentação</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Segunda linha - Data e Horário */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Data</label>
+                  <Input
+                    type="date"
+                    className="rounded-xl"
+                    value={newAppointmentDate}
+                    onChange={(e) => setNewAppointmentDate(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Horário</label>
+                  <Input
+                    type="time"
+                    className="rounded-xl"
+                    value={newAppointmentTime}
+                    onChange={(e) => setNewAppointmentTime(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Terceira linha - Lead e Lembrete */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Lead Relacionado</label>
+                  <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Selecione o lead</option>
+                    <option value="maria">👩 Maria Silva</option>
+                    <option value="joao">👨 João Santos</option>
+                    <option value="ana">👩 Ana Costa</option>
+                    <option value="carlos">👨 Carlos Lima</option>
+                    <option value="outro">➕ Outro</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Lembrete</label>
+                  <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Sem lembrete</option>
+                    <option value="15min">⏰ 15 min antes</option>
+                    <option value="30min">⏰ 30 min antes</option>
+                    <option value="1hora">⏰ 1 hora antes</option>
+                    <option value="1dia">📅 1 dia antes</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Quarta linha - Local */}
               <div>
-                <label className="mb-2 block text-sm font-medium">Título do compromisso</label>
+                <label className="mb-2 block text-sm font-medium">Local/Endereço</label>
                 <Input
                   type="text"
                   className="rounded-xl"
-                  placeholder="Ex: Reunião com Cliente"
-                  value={newAppointmentTitle}
-                  onChange={(e) => setNewAppointmentTitle(e.target.value)}
+                  placeholder="Ex: Escritório Central, 1234 Main St, Kissimmee, ou Videochamada"
                 />
               </div>
+
+              {/* Quinta linha - Observações */}
               <div>
-                <label className="mb-2 block text-sm font-medium">Data</label>
-                <Input
-                  type="date"
-                  className="rounded-xl"
-                  value={newAppointmentDate}
-                  onChange={(e) => setNewAppointmentDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium">Horário</label>
-                <Input
-                  type="time"
-                  className="rounded-xl"
-                  value={newAppointmentTime}
-                  onChange={(e) => setNewAppointmentTime(e.target.value)}
+                <label className="mb-2 block text-sm font-medium">Observações</label>
+                <textarea
+                  className="w-full resize-none rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  placeholder="Informações adicionais sobre o compromisso..."
                 />
               </div>
             </div>
@@ -3569,7 +3632,7 @@ Seu Corretor`}
                   setNewAppointmentTime("")
                 }}
               >
-                Salvar
+                Salvar Compromisso
               </Button>
             </div>
           </div>
