@@ -825,7 +825,11 @@ export function DesignaliCreative() {
                         <div className="ml-4 mt-1 space-y-1">
                           {/* Todos os Agents */}
                           <button
-                            onClick={() => handleNavigate("agents")}
+                            onClick={() => {
+                              setActiveTab("apps")
+                              setShowRoiTool(false)
+                              setActiveRoiView("agents")
+                            }}
                             className={`w-full text-left p-3 rounded-lg transition-all flex items-center gap-3 text-sm ${
                               activeRoiView === "agents"
                                 ? "bg-blue-50 text-blue-600 font-medium"
@@ -887,7 +891,15 @@ export function DesignaliCreative() {
                           "flex w-full items-center justify-between p-3 rounded-lg text-sm font-medium transition-colors",
                           item.isActive ? "bg-primary/10 text-primary" : "hover:bg-gray-100",
                         )}
-                        onClick={() => item.tabValue && setActiveTab(item.tabValue)}
+                        onClick={() => {
+                          if (item.tabValue) {
+                            setActiveTab(item.tabValue)
+                            if (item.tabValue === "learn") {
+                              // If CRM tab
+                              setActiveCrmTab("dashboard") // Set CRM sub-tab to dashboard
+                            }
+                          }
+                        }}
                       >
                         <div className="flex items-center gap-3">
                           {item.title === "Home" && <HomeIcon className="h-5 w-5 text-gray-600" />}
@@ -987,7 +999,11 @@ export function DesignaliCreative() {
                         <div className="ml-4 mt-1 space-y-1">
                           {/* Todos os Agents */}
                           <button
-                            onClick={() => handleNavigate("agents")}
+                            onClick={() => {
+                              setActiveTab("apps")
+                              setShowRoiTool(false)
+                              setActiveRoiView("agents")
+                            }}
                             className={`w-full text-left p-3 rounded-lg transition-all flex items-center gap-3 text-sm ${
                               activeRoiView === "agents"
                                 ? "bg-blue-50 text-blue-600 font-medium"
@@ -1046,7 +1062,15 @@ export function DesignaliCreative() {
                           "flex w-full items-center justify-between p-3 rounded-lg text-sm font-medium transition-colors",
                           item.isActive ? "bg-primary/10 text-primary" : "hover:bg-gray-100",
                         )}
-                        onClick={() => item.tabValue && setActiveTab(item.tabValue)}
+                        onClick={() => {
+                          if (item.tabValue) {
+                            setActiveTab(item.tabValue)
+                            if (item.tabValue === "learn") {
+                              // If CRM tab
+                              setActiveCrmTab("dashboard") // Set CRM sub-tab to dashboard
+                            }
+                          }
+                        }}
                       >
                         <div className="flex items-center gap-3">
                           {item.title === "Home" && <HomeIcon className="h-5 w-5 text-gray-600" />}
@@ -3065,7 +3089,7 @@ export function DesignaliCreative() {
 
                     const formatted = new Intl.NumberFormat("en-US", {
                       style: "currency",
-                      currency: "USD",
+                      currency: "BRL",
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     }).format(amount)
@@ -3747,20 +3771,4 @@ Seu Corretor`}
             <div className="mt-6 flex gap-3">
               <Button
                 variant="outline"
-                className="flex-1 rounded-xl bg-transparent"
-                onClick={() => setShowNewAppointmentModal(false)}
-              >
-                Cancelar
-              </Button>
-              <Button className="flex-1 rounded-xl" onClick={handleSaveAppointment}>
-                Salvar Compromisso
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default DesignaliCreative
+                className="flex-1 rounded-xl bg-transparent"\
