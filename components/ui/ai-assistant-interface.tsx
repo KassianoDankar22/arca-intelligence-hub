@@ -1,14 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef, useEffect } from "react" // Import useEffect
-import { Search, Mic, ArrowUp, Plus, FileText, Calculator, MapPin, DollarSign, ChevronLeft } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useRef, useEffect } from "react"
+import { Mic, ArrowUp, Plus, FileText, ChevronLeft } from "lucide-react"
+import { motion } from "framer-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
-import { processArcaAIChat, processDocument } from "@/app/actions" // Import Server Actions
+import { processArcaAIChat, processDocument } from "@/app/actions"
 
 // Helper function to read file content (still needed on client for file input)
 function readFileContent(file: File): Promise<string> {
@@ -80,7 +79,7 @@ export function AIAssistantInterface() {
   const [showUploadAnimation, setShowUploadAnimation] = useState(false)
   const [activeCommandCategory, setActiveCommandCategory] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState(false)
-  const [showChat, setShowChat] = useState(false)
+  const [showChat, setShowChat] = useState(false) // Keep this state for full chat functionality later
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [activeConversation, setActiveConversation] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -103,7 +102,7 @@ export function AIAssistantInterface() {
       // If there are stored conversations, automatically show the chat and select the most recent one
       if (parsedConversations.length > 0) {
         setActiveConversation(parsedConversations[0].id)
-        setShowChat(true)
+        setShowChat(true) // Show full chat if there's history
       }
     }
   }, [])
@@ -501,259 +500,40 @@ export function AIAssistantInterface() {
     )
   }
 
+  // This is the new basic chat structure that replaces the welcome screen
   return (
-    <div
-      className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center bg-white p-4 sm:p-6"
-      style={{
-        filter: "none",
-        boxShadow: "none",
-        textShadow: "none",
-        background: "white",
-        backgroundColor: "white",
-      }}
-    >
-      <div
-        className="w-full max-w-3xl mx-auto flex flex-col items-center"
-        style={{ filter: "none", boxShadow: "none" }}
-      >
-        {/* Logo with animated gradient */}
-        <div className="mb-8 relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-[150px] lg:h-[150px]">
-          {/* Círculo animado de fundo */}
-          <div
-            className={cn(
-              "absolute inset-0 w-full h-full rounded-full overflow-hidden",
-              `
-[--white-gradient:repeating-linear-gradient(100deg,var(--white)_0%,var(--white)_7%,var(--transparent)_10%,var(--transparent)_12%,var(--white)_16%)]
-[--dark-gradient:repeating-linear-gradient(100deg,var(--black)_0%,var(--black)_7%,var(--transparent)_10%,var(--transparent)_12%,var(--black)_16%)]
-[--aurora:repeating-linear-gradient(100deg,var(--blue-500)_10%,var(--indigo-300)_15%,var(--blue-300)_20%,var(--violet-200)_25%,var(--blue-400)_30%)]
-[background-image:var(--white-gradient),var(--aurora)]
-dark:[background-image:var(--dark-gradient),var(--aurora)]
-[background-size:300%,_200%]
-[background-position:50%_50%,50%_50%]
-filter blur-[10px] invert dark:invert-0
-after:content-[""] after:absolute after:inset-0 after:[background-image:var(--white-gradient),var(--aurora)] 
-after:dark:[background-image:var(--dark-gradient),var(--aurora)]
-after:[background-size:200%,_100%] 
-after:animate-aurora after:[background-attachment:fixed] after:mix-blend-difference
-pointer-events-none
-opacity-50 will-change-transform`,
-              `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--transparent)_70%)]`,
-            )}
-          ></div>
-          {/* Logo da Arca centralizada sobre o círculo */}
-          <img
-            src="/logo-arca.png"
-            alt="Arca AI Logo"
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 2, // Garante que a logo fique acima do círculo
-            }}
-            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-[80px] lg:h-[80px]"
-          />
-        </div>
+    <div className="flex h-[calc(100vh-200px)] bg-white rounded-lg overflow-hidden border flex-col">
+      {/* Header */}
+      <div className="flex items-center p-4 border-b bg-white">
+        <img src="/logo-arca.png" alt="Arca AI Logo" width={40} height={40} className="h-8 w-8 mr-3" />
+        <h2 className="font-semibold text-lg">Arca AI Assistant</h2>
+      </div>
 
-        {/* Welcome message */}
-        <div className="mb-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center"
-          >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 mb-2">
-              Como podemos te ajudar hoje?
-            </h1>
-            <p className="text-sm sm:text-base text-gray-500 max-w-xs sm:max-w-md lg:max-w-none lg:whitespace-nowrap lg:overflow-hidden lg:text-ellipsis">
-              Deixe a Arca AI te ajudar a pesquisar, analisar e decidir com agilidade
-            </p>
-          </motion.div>
+      {/* Messages Area (empty for now) */}
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-4 max-w-3xl mx-auto">
+          <div className="text-center text-gray-500 mt-10">Comece uma conversa com a Arca AI!</div>
         </div>
+      </ScrollArea>
 
-        {/* Input area */}
-        <div className="w-full bg-white border border-gray-200 rounded-xl overflow-hidden mb-4">
-          <div className="p-3 sm:p-4">
+      {/* Input Area */}
+      <div className="border-t bg-white p-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-end gap-3">
             <input
-              ref={inputRef}
               type="text"
-              placeholder="Pergunte sobre imóveis, ROI, bairros ou investimentos em Orlando..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSendMessage()
-                }
-              }}
-              className="w-full text-gray-700 text-sm sm:text-base outline-none placeholder:text-gray-400 placeholder:text-sm sm:placeholder:text-base"
-            />
-          </div>
-
-          {/* Uploaded files */}
-          {uploadedFiles.length > 0 && (
-            <div className="px-4 pb-3">
-              <div className="flex flex-wrap gap-2">
-                {uploadedFiles.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 bg-gray-50 py-1 px-2 rounded-md border border-gray-200"
-                  >
-                    <FileText className="w-3 h-3 text-blue-600" />
-                    <span className="text-xs text-gray-700">{file}</span>
-                    <button
-                      onClick={() => setUploadedFiles((prev) => prev.filter((_, i) => i !== index))}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Functions and actions */}
-          <div className="px-3 py-2 sm:px-4 sm:py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setSearchEnabled(!searchEnabled)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
-                  searchEnabled
-                    ? "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                    : "bg-gray-100 text-gray-400 hover:bg-gray-200"
-                }`}
-              >
-                <Search className="w-4 h-4" />
-                <span>Pesquisar</span>
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputValue.trim()}
-                className={`w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-colors ${
-                  inputValue.trim()
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                }`}
-              >
-                <ArrowUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Upload files */}
-          <div className="px-3 py-1.5 sm:px-4 sm:py-2 border-t border-gray-100">
-            <input
-              id="file-upload"
-              type="file"
-              accept=".pdf,.txt,.csv,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-              onChange={handleUploadFile}
-              className="hidden"
+              placeholder="Digite sua mensagem..."
+              className="w-full rounded-2xl border border-gray-200 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled // Disabled as per "NÃO adicionar funcionalidades ainda"
             />
             <button
-              onClick={() => document.getElementById("file-upload")?.click()}
-              className="flex items-center gap-2 text-gray-600 text-xs sm:text-sm hover:text-gray-900 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 cursor-not-allowed"
+              disabled // Disabled as per "NÃO adicionar funcionalidades ainda"
             >
-              {showUploadAnimation ? (
-                <motion.div className="flex space-x-1">
-                  {[...Array(3)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="w-1.5 h-1.5 bg-blue-600 rounded-full"
-                      animate={{ y: [0, -5, 0] }}
-                      transition={{
-                        duration: 0.4,
-                        repeat: Number.POSITIVE_INFINITY,
-                        delay: i * 0.1,
-                      }}
-                    />
-                  ))}
-                </motion.div>
-              ) : (
-                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              )}
-              <span>Enviar Documentos</span>
+              <ArrowUp className="w-4 h-4" />
             </button>
           </div>
         </div>
-
-        {/* Command categories */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-          <CommandButton
-            icon={<Calculator className="w-5 h-5" />}
-            label="Análises"
-            isActive={activeCommandCategory === "analysis"}
-            onClick={() => setActiveCommandCategory(activeCommandCategory === "analysis" ? null : "analysis")}
-          />
-          <CommandButton
-            icon={<MapPin className="w-5 h-5" />}
-            label="Mercado"
-            isActive={activeCommandCategory === "market"}
-            onClick={() => setActiveCommandCategory(activeCommandCategory === "market" ? null : "market")}
-          />
-          <CommandButton
-            icon={<DollarSign className="w-5 h-5" />}
-            label="Investimentos"
-            isActive={activeCommandCategory === "investment"}
-            onClick={() => setActiveCommandCategory(activeCommandCategory === "investment" ? null : "investment")}
-          />
-        </div>
-
-        {/* Command suggestions */}
-        <AnimatePresence>
-          {activeCommandCategory && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="w-full mb-6 overflow-hidden"
-            >
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div className="p-3 border-b border-gray-100">
-                  <h3 className="text-sm font-medium text-gray-700">
-                    {activeCommandCategory === "analysis"
-                      ? "Sugestões de Análise"
-                      : activeCommandCategory === "market"
-                        ? "Informações de Mercado"
-                        : "Estratégias de Investimento"}
-                  </h3>
-                </div>
-                <ul className="divide-y divide-gray-100">
-                  {commandSuggestions[activeCommandCategory as keyof typeof commandSuggestions].map(
-                    (suggestion, index) => (
-                      <motion.li
-                        key={index}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.03 }}
-                        onClick={() => handleCommandSelect(suggestion)}
-                        className="p-3 hover:bg-gray-50 cursor-pointer transition-colors duration-75"
-                      >
-                        <div className="flex items-center gap-3">
-                          {activeCommandCategory === "analysis" ? (
-                            <Calculator className="w-4 h-4 text-blue-600" />
-                          ) : activeCommandCategory === "market" ? (
-                            <MapPin className="w-4 h-4 text-blue-600" />
-                          ) : (
-                            <DollarSign className="w-4 h-4 text-blue-600" />
-                          )}
-                          <span className="text-sm text-gray-700">{suggestion}</span>
-                        </div>
-                      </motion.li>
-                    ),
-                  )}
-                </ul>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   )

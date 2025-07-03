@@ -47,16 +47,7 @@ export function StarBorder<T extends ElementType = "button">({
           animationDuration: speed,
         }}
       />
-      <div
-        className={cn(
-          "relative z-1 border text-base rounded-[20px] leading-4 text-slate-600",
-          "bg-gradient-to-b from-background/90 to-muted/90 border-border/40",
-          "dark:from-background dark:to-muted dark:border-border",
-          "flex items-center justify-center px-6 py-4", // These classes ensure the content is centered
-        )}
-      >
-        {children}
-      </div>
+      
     </Component>
   )
 }
