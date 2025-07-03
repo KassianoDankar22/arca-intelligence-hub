@@ -3542,6 +3542,7 @@ Seu Corretor`}
                     <option value="ligacao">📞 Ligação</option>
                     <option value="followup">🔄 Follow-up</option>
                     <option value="apresentacao">📊 Apresentação</option>
+                    <option value="negociacao">💼 Negociação</option>
                   </select>
                 </div>
               </div>
@@ -3578,15 +3579,16 @@ Seu Corretor`}
                     <option value="joao">👨 João Santos</option>
                     <option value="ana">👩 Ana Costa</option>
                     <option value="carlos">👨 Carlos Lima</option>
-                    <option value="outro">➕ Outro</option>
+                    <option value="novo">➕ Novo Lead</option>
+                    <option value="sem-lead">📋 Sem lead específico</option>
                   </select>
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium">Lembrete</label>
                   <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Sem lembrete</option>
-                    <option value="15min">⏰ 15 min antes</option>
-                    <option value="30min">⏰ 30 min antes</option>
+                    <option value="15min">⏰ 15 minutos antes</option>
+                    <option value="30min">⏰ 30 minutos antes</option>
                     <option value="1hora">⏰ 1 hora antes</option>
                     <option value="1dia">📅 1 dia antes</option>
                   </select>
