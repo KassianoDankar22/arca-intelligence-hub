@@ -382,7 +382,7 @@ const sidebarItems = [
   },
   {
     title: "Arca AI Chat",
-    icon: <MessageSquare />,
+    icon: <MessageCircle />,
     tabValue: "files", // Corresponds to the "files" tab
   },
   {
@@ -1465,7 +1465,7 @@ export function DesignaliCreative() {
                                       <Badge variant="outline" className="rounded-xl">
                                         {app.category}
                                       </Badge>
-                                  </div>
+                                    </div>
                                   </CardHeader>
                                   <CardContent className="pb-2">
                                     <CardTitle className="text-lg">{app.name}</CardTitle>
@@ -1832,7 +1832,7 @@ export function DesignaliCreative() {
                                   <option value="Site">Site</option>
                                   <option value="Google">Google</option>
                                   <option value="Instagram">Instagram</option>
-                                  <option value="Recomendacao">Recomendação</option>
+                                  <option value="Recomendação">Recomendação</option>
                                 </select>
                               </div>
                             </div>
@@ -1999,38 +1999,38 @@ export function DesignaliCreative() {
                         </div>
 
                         {/* Leads Table */}
-                        <div>
-                          <table className="w-full min-w-full divide-y divide-gray-200">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                               <tr>
-                                <th className="w-[15%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Nome
                                 </th>
-                                <th className="w-[15%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Email
                                 </th>
-                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Telefone
                                 </th>
-                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Fonte
                                 </th>
-                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Tipo de Interesse
                                 </th>
-                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   QUALIFICAÇÃO
                                 </th>
-                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Orçamento
                                 </th>
-                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Status
                                 </th>
-                                <th className="w-[4%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Data
                                 </th>
-                                <th className="px-2 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Ações
                                 </th>
                               </tr>
@@ -2038,16 +2038,16 @@ export function DesignaliCreative() {
                             <tbody className="bg-white divide-y divide-gray-200">
                               {filteredLeads.map((lead) => (
                                 <tr key={lead.id} className="hover:bg-gray-50">
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {lead.nome}
                                   </td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.email}</td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.telefone}</td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.fonte}</td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.email}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.telefone}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.fonte}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {lead.tipoInteresse}
                                   </td>
-                                  <td className="px-2 py-4 whitespace-nowrap">
+                                  <td className="px-6 py-4 whitespace-nowrap">
                                     <span
                                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                                         lead.temperatura === "Quente"
@@ -2063,16 +2063,18 @@ export function DesignaliCreative() {
                                         ? "🔥 Quente"
                                         : lead.temperatura === "Morno"
                                           ? "🌡️ Morno"
-                                          : "❄️ Frio"}
+                                          : lead.temperatura === "Frio"
+                                            ? "❄️ Frio"
+                                            : "Não definido"}
                                     </span>
                                   </td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {lead.orcamento.toLocaleString("pt-BR", {
                                       style: "currency",
                                       currency: "BRL",
                                     })}
                                   </td>
-                                  <td className="px-2 py-4 whitespace-nowrap">
+                                  <td className="px-6 py-4 whitespace-nowrap">
                                     <select
                                       value={lead.status}
                                       onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
@@ -2098,8 +2100,8 @@ export function DesignaliCreative() {
                                       <option value="Descartado">Descartado</option>
                                     </select>
                                   </td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.data}</td>
-                                  <td className="px-2 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.data}</td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex justify-end gap-2">
                                       <button
                                         onClick={() => handleViewLead(lead)}
@@ -2650,14 +2652,14 @@ export function DesignaliCreative() {
 
               <div>
                 <label className="mb-1 block text-sm font-medium">Telefone</label>
-                    <div className="flex gap-2">
-                      <select className="w-24 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="+55">🇧🇷 +55</option>
-                        <option value="+1">🇺🇸 +1</option>
-                        <option value="+34">🇪🇸 +34</option>
-                        <option value="+351">🇵🇹 +351</option>
-                        <option value="+33">🇫🇷 +33</option>
-                      </select>
+                <div className="flex gap-2">
+                  <select className="w-24 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="+55">🇧🇷 +55</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+34">🇪🇸 +34</option>
+                    <option value="+351">🇵🇹 +351</option>
+                    <option value="+33">🇫🇷 +33</option>
+                  </select>
                   <input
                     type="tel"
                     className="flex-1 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -2802,7 +2804,9 @@ export function DesignaliCreative() {
                           ? "🔥 Quente"
                           : selectedLead.temperatura === "Morno"
                             ? "🌡️ Morno"
-                            : "❄️ Frio"}
+                            : selectedLead.temperatura === "Frio"
+                              ? "❄️ Frio"
+                              : "Não definido"}
                       </span>
                     </p>
                   </div>
@@ -2861,355 +2865,412 @@ export function DesignaliCreative() {
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                     <Phone className="h-8 w-8 text-green-600" />
                   </div>
-                  <h4 className="text-lg font-semibold">Ligar para {selectedLead.nome}</h4>
-                  <p className="text-gray-600">
-                    Tem certeza que deseja ligar para {selectedLead.nome} no número {selectedLead.telefone}?
-                  </p>
+                  <h4 className="text-lg font-medium">{selectedLead.nome}</h4>
+                  <p className="text-gray-600">{selectedLead.telefone}</p>
                 </div>
-                <div className="flex justify-center gap-4">
-                  <Button variant="outline" onClick={() => setShowLeadModal(false)}>
-                    Cancelar
-                  </Button>
-                  <Button>Ligar</Button>
+
+                <div className="space-y-3">
+                  <button className="w-full rounded-lg bg-green-600 p-3 text-white hover:bg-green-700">
+                    📞 Ligar Agora
+                  </button>
+                  <button className="w-full rounded-lg border border-gray-300 p-3 hover:bg-gray-50">
+                    📱 Enviar WhatsApp
+                  </button>
+                  <button className="w-full rounded-lg border border-gray-300 p-3 hover:bg-gray-50">
+                    📅 Agendar Ligação
+                  </button>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Notas da Ligação</label>
+                  <textarea
+                    className="w-full resize-none rounded-lg border border-gray-300 p-3"
+                    rows={3}
+                    placeholder="Adicione suas anotações sobre a ligação..."
+                  />
                 </div>
               </div>
             )}
 
             {actionType === "email" && (
               <div className="space-y-4">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
-                    <MessageSquare className="h-8 w-8 text-purple-600" />
-                  </div>
-                  <h4 className="text-lg font-semibold">Enviar Email para {selectedLead.nome}</h4>
-                  <p className="text-gray-600">
-                    Tem certeza que deseja enviar um email para {selectedLead.email}?
-                  </p>
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Para</label>
+                  <Input type="email" className="rounded-lg" value={selectedLead.email} readOnly />
                 </div>
-                <div className="flex justify-center gap-4">
-                  <Button variant="outline" onClick={() => setShowLeadModal(false)}>
-                    Cancelar
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Assunto</label>
+                  <Input
+                    type="text"
+                    className="rounded-lg"
+                    placeholder="Assunto do email"
+                    defaultValue={`Oportunidade de Investimento - ${selectedLead.tipoInteresse}`}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium">Mensagem</label>
+                  <textarea
+                    className="w-full resize-none rounded-lg border border-gray-300 p-3"
+                    rows={6}
+                    placeholder="Digite sua mensagem..."
+                    defaultValue={`Olá ${selectedLead.nome},
+
+Espero que esteja bem! 
+
+Gostaria de dar continuidade à nossa conversa sobre sua busca por ${selectedLead.tipoInteresse.toLowerCase()} em Orlando.
+
+Tenho algumas opções interessantes que podem se adequar ao seu orçamento de ${selectedLead.orcamento.toLocaleString(
+                      "pt-BR",
+                      {
+                        style: "currency",
+                        currency: "BRL",
+                      },
+                    )}.
+
+Quando seria um bom momento para conversarmos?
+
+Atenciosamente,
+Seu Corretor`}
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1 rounded-lg bg-transparent">
+                    💾 Salvar Rascunho
                   </Button>
-                  <Button>Enviar Email</Button>
+                  <Button className="flex-1 rounded-lg">📧 Enviar Email</Button>
                 </div>
               </div>
             )}
 
             {actionType === "edit" && (
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-2 block text-sm font-medium">Nome Completo</label>
-                  <Input
-                    type="text"
-                    className="rounded-xl"
-                    placeholder="Digite o nome completo"
-                    name="nome"
-                    value={leadFormData.nome}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">Email</label>
-                  <Input
-                    type="email"
-                    className="rounded-xl"
-                    placeholder="email@exemplo.com"
-                    name="email"
-                    value={leadFormData.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Fonte do Lead</label>
-                  <select
-                    className="w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    name="fonte"
-                    value={leadFormData.fonte}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Selecione a origem</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="Facebook">Facebook</option>
-                    <option value="Site">Site</option>
-                    <option value="Google">Google</option>
-                    <option value="Recomendação">Recomendação</option>
-                    <option value="LinkedIn">LinkedIn</option>
-                    <option value="WhatsApp">WhatsApp</option>
-                    <option value="Outros">Outros</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Telefone</label>
-                  <div className="flex gap-2">
-                    <select className="w-24 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option value="+55">🇧🇷 +55</option>
-                      <option value="+1">🇺🇸 +1</option>
-                      <option value="+34">🇪🇸 +34</option>
-                      <option value="+351">🇵🇹 +351</option>
-                      <option value="+33">🇫🇷 +33</option>
-                    </select>
+              <>
+                <h3 className="text-lg font-semibold mb-4">Editar Lead - {selectedLead.nome}</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Nome Completo</label>
                     <Input
-                      type="tel"
-                      className="flex-1 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="(11) 99999-9999"
-                      name="telefone"
-                      value={leadFormData.telefone}
+                      type="text"
+                      name="nome"
+                      value={leadFormData.nome}
                       onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                      placeholder="Digite o nome completo"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">E-mail</label>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={leadFormData.email}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                      placeholder="email@exemplo.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm font-medium">Telefone</label>
+                    <div className="flex gap-2">
+                      <select className="w-24 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="+55">🇧🇷 +55</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+34">🇪🇸 +34</option>
+                        <option value="+351">🇵🇹 +351</option>
+                        <option value="+33">🇫🇷 +33</option>
+                      </select>
+                      <input
+                        type="tel"
+                        name="telefone"
+                        value={leadFormData.telefone}
+                        onChange={handleInputChange}
+                        className="flex-1 rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Fonte do Lead</label>
+                    <select
+                      name="fonte"
+                      value={leadFormData.fonte}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                    >
+                      <option value="">Selecione a origem</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="Site">Site</option>
+                      <option value="Google">Google</option>
+                      <option value="Recomendacao">Recomendação</option>
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="WhatsApp">WhatsApp</option>
+                      <option value="Outros">Outros</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Tipo de Interesse</label>
+                    <select
+                      name="tipoInteresse"
+                      value={leadFormData.tipoInteresse}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                    >
+                      <option value="">Selecione o tipo</option>
+                      <option value="Curta Temporada">Investimento Curta Temporada</option>
+                      <option value="Longa Temporada">Investimento Longa Temporada</option>
+                      <option value="Morar">Morar</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Qualificação do Lead</label>
+                    <select
+                      name="temperatura"
+                      value={leadFormData.temperatura}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                    >
+                      <option value="">Selecione a qualificação</option>
+                      <option value="Quente">🔥 Quente</option>
+                      <option value="Morno">🌡️ Morno</option>
+                      <option value="Frio">❄️ Frio</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Orçamento</label>
+                    <Input
+                      type="text"
+                      name="orcamento"
+                      value={leadFormData.orcamento}
+                      onChange={(e) => {
+                        const rawValue = e.target.value
+                        const digitsOnly = rawValue.replace(/\D/g, "")
+
+                        if (!digitsOnly) {
+                          setLeadFormData((prev) => ({ ...prev, orcamento: "" }))
+                          return
+                        }
+
+                        const cents = Number.parseInt(digitsOnly, 10)
+                        const amount = cents / 100
+
+                        const formatted = new Intl.NumberFormat("en-US", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }).format(amount)
+
+                        setLeadFormData((prev) => ({ ...prev, orcamento: formatted }))
+                      }}
+                      className="w-full p-2 border rounded"
+                      placeholder="Ex: $300,000.00"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Observações</label>
+                    <textarea
+                      name="observacoes"
+                      value={leadFormData.observacoes}
+                      onChange={handleInputChange}
+                      placeholder="Informações adicionais sobre o lead..."
+                      className="w-full p-2 border rounded"
+                      rows={3}
+                    ></textarea>
+                  </div>
                 </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Tipo de Interesse</label>
-                  <select
-                    className="w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    name="tipoInteresse"
-                    value={leadFormData.tipoInteresse}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Selecione o tipo</option>
-                    <option value="Curta Temporada">Investimento Curta Temporada</option>
-                    <option value="Longa Temporada">Investimento Longa Temporada</option>
-                    <option value="Morar">Morar</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm font-medium">Qualificação do Lead</label>
-                  <select
-                    className="w-full rounded-lg border p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    name="temperatura"
-                    value={leadFormData.temperatura}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Selecione a qualificação</option>
-                    <option value="Quente">🔥 Quente - Pronto para comprar</option>
-                    <option value="Morno">🌡️ Morno - Interessado mas precisa nurturing</option>
-                    <option value="Frio">❄️ Frio - Apenas pesquisando</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">Orçamento</label>
-                  <Input
-                    type="text"
-                    className="rounded-xl"
-                    placeholder="Ex: $300,000.00"
-                    name="orcamento"
-                    value={leadFormData.orcamento}
-                    onChange={(e) => {
-                      const rawValue = e.target.value
-                      const digitsOnly = rawValue.replace(/\D/g, "")
-
-                      if (!digitsOnly) {
-                        setLeadFormData((prev) => ({ ...prev, orcamento: "" }))
-                        return
-                      }
-
-                      const cents = Number.parseInt(digitsOnly, 10)
-                      const amount = cents / 100
-
-                      const formatted = new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }).format(amount)
-
-                      setLeadFormData((prev) => ({ ...prev, orcamento: formatted }))
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-sm font-medium">Observações</label>
-                  <textarea
-                    className="w-full resize-none rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={3}
-                    placeholder="Informações adicionais sobre o lead..."
-                    name="observacoes"
-                    value={leadFormData.observacoes}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 flex gap-3">
-                <Button variant="outline" className="flex-1 rounded-xl bg-transparent" onClick={() => setShowLeadModal(false)}>
-                  Cancelar
-                </Button>
-                <Button className="flex-1 rounded-xl\" onClick={handleUpdateLead}>
-                  Atualizar Lead
-                </Button>
-              </div>
+              </>
             )}
+
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-xl bg-transparent"
+                onClick={() => setShowLeadModal(false)}
+              >
+                Fechar
+              </Button>
+              {actionType === "view" && (
+                <Button className="flex-1 rounded-xl" onClick={() => handleEditLead(selectedLead)}>
+                  Editar Lead
+                </Button>
+              )}
+              {actionType === "edit" && (
+                <Button
+                  onClick={handleUpdateLead}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Salvar Alterações
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      )
-}
+      )}
 
-{
-  /* Modal de Relatório */
-}
-{
-  showReportModal && (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold text-gray-900">Relatório de Leads</h3>
-          <button onClick={() => setShowReportModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl">
-            ✕
-          </button>
-        </div>
-
-        {(() => {
-          const reportData = generateReportData()
-          return (
-            <div className="space-y-6">
-              {/* Resumo Geral */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-blue-600">{reportData.totalLeads}</div>
-                  <div className="text-sm text-blue-800">Total de Leads</div>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-green-600">{reportData.leadsPorStatus.fechado}</div>
-                  <div className="text-sm text-green-800">Vendas Fechadas</div>
-                </div>
-                <div className="bg-yellow-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-yellow-600">{reportData.taxaConversao}%</div>
-                  <div className="text-sm text-yellow-800">Taxa de Conversão</div>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg text-center">
-                  <div className="text-2xl font-bold text-purple-600">
-                    R$ {reportData.valorMedio.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}
-                  </div>
-                  <div className="text-sm text-purple-800">Ticket Médio</div>
-                </div>
-              </div>
-
-              {/* Leads por Status */}
-              <div className="bg-white border rounded-lg p-6">
-                <h4 className="text-lg font-semibold mb-4">Distribuição por Status</h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span>Novos:</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 h-3 bg-gray-200 rounded-full">
-                        <div
-                          className="h-3 bg-blue-500 rounded-full"
-                          style={{ width: `${(reportData.leadsPorStatus.novo / reportData.totalLeads) * 100}%` }}
-                        ></div>
-                      </div>
-                      <span className="font-medium">{reportData.leadsPorStatus.novo}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Qualificados:</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 h-3 bg-gray-200 rounded-full">
-                        <div
-                          className="h-3 bg-green-500 rounded-full"
-                          style={{
-                            width: `${(reportData.leadsPorStatus.qualificado / reportData.totalLeads) * 100}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <span className="font-medium">{reportData.leadsPorStatus.qualificado}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Propostas:</span>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-32 h-3 bg-gray-200 rounded-full"
-                        style={{
-                          width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
-                        }}
-                      ></div>
-                      <span className="font-medium">{reportData.leadsPorStatus.proposta}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Fechados:</span>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-3 bg-emerald-500 rounded-full"
-                        style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
-                      ></div>
-                      <span className="font-medium">{reportData.leadsPorStatus.fechado}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Leads por Fonte */}
-              <div className="bg-white border rounded-lg p-6">
-                <h4 className="text-lg font-semibold mb-4">Leads por Fonte</h4>
-                <div className="space-y-2">
-                  {Object.entries(reportData.leadsPorFonte).map(([fonte, quantidade]) => (
-                    <div key={fonte} className="flex justify-between items-center">
-                      <span>{fonte}:</span>
-                      <span className="font-medium">{quantidade} leads</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Leads por Qualificação */}
-              <div className="bg-white border rounded-lg p-6">
-                <h4 className="text-lg font-semibold mb-4">Leads por Qualificação</h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>🔥 Quente:</span>
-                    <span className="font-medium">{reportData.leadsPorTemperatura.quente} leads</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>🌡️ Morno:</span>
-                    <span className="font-medium">{reportData.leadsPorTemperatura.morno} leads</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>❄️ Frio:</span>
-                    <span className="font-medium">{reportData.leadsPorTemperatura.frio} leads</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Valor Total */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-center">
-                  <div className="text-sm text-gray-600">Valor Total do Pipeline</div>
-                  <div className="text-3xl font-bold text-gray-900">
-                    R$ {reportData.valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                  </div>
-                </div>
-              </div>
-
-              {/* Botões de Ação */}
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={() => window.print()}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Imprimir Relatório
-                </button>
-                <button
-                  onClick={() => setShowReportModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
-                >
-                  Fechar
-                </button>
-              </div>
+      {/* Modal de Relatório */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-900">Relatório de Leads</h3>
+              <button onClick={() => setShowReportModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl">
+                ✕
+              </button>
             </div>
-          )
-        })()}
-      </div>
+
+            {(() => {
+              const reportData = generateReportData()
+              return (
+                <div className="space-y-6">
+                  {/* Resumo Geral */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-blue-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-blue-600">{reportData.totalLeads}</div>
+                      <div className="text-sm text-blue-800">Total de Leads</div>
+                    </div>
+                    <div className="bg-green-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-green-600">{reportData.leadsPorStatus.fechado}</div>
+                      <div className="text-sm text-green-800">Vendas Fechadas</div>
+                    </div>
+                    <div className="bg-yellow-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-yellow-600">{reportData.taxaConversao}%</div>
+                      <div className="text-sm text-yellow-800">Taxa de Conversão</div>
+                    </div>
+                    <div className="bg-purple-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-purple-600">
+                        R$ {reportData.valorMedio.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}
+                      </div>
+                      <div className="text-sm text-purple-800">Ticket Médio</div>
+                    </div>
+                  </div>
+
+                  {/* Leads por Status */}
+                  <div className="bg-white border rounded-lg p-6">
+                    <h4 className="text-lg font-semibold mb-4">Distribuição por Status</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span>Novos:</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 h-3 bg-gray-200 rounded-full">
+                            <div
+                              className="h-3 bg-blue-500 rounded-full"
+                              style={{ width: `${(reportData.leadsPorStatus.novo / reportData.totalLeads) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-medium">{reportData.leadsPorStatus.novo}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Qualificados:</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 h-3 bg-gray-200 rounded-full">
+                            <div
+                              className="h-3 bg-green-500 rounded-full"
+                              style={{
+                                width: `${(reportData.leadsPorStatus.qualificado / reportData.totalLeads) * 100}%`,
+                              }}
+                            ></div>
+                          </div>
+                          <span className="font-medium">{reportData.leadsPorStatus.qualificado}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Propostas:</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 h-3 bg-gray-200 rounded-full">
+                            <div
+                              className="h-3 bg-yellow-500 rounded-full"
+                              style={{
+                                width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
+                              }}
+                            ></div>
+                          </div>
+                          <span className="font-medium">{reportData.leadsPorStatus.proposta}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Fechados:</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 h-3 bg-gray-200 rounded-full">
+                            <div
+                              className="h-3 bg-emerald-500 rounded-full"
+                              style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-medium">{reportData.leadsPorStatus.fechado}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Leads por Fonte */}
+                  <div className="bg-white border rounded-lg p-6">
+                    <h4 className="text-lg font-semibold mb-4">Leads por Fonte</h4>
+                    <div className="space-y-2">
+                      {Object.entries(reportData.leadsPorFonte).map(([fonte, quantidade]) => (
+                        <div key={fonte} className="flex justify-between items-center">
+                          <span>{fonte}:</span>
+                          <span className="font-medium">{quantidade} leads</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Leads por Qualificação */}
+                  <div className="bg-white border rounded-lg p-6">
+                    <h4 className="text-lg font-semibold mb-4">Leads por Qualificação</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>🔥 Quente:</span>
+                        <span className="font-medium">{reportData.leadsPorTemperatura.quente} leads</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>🌡️ Morno:</span>
+                        <span className="font-medium">{reportData.leadsPorTemperatura.morno} leads</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>❄️ Frio:</span>
+                        <span className="font-medium">{reportData.leadsPorTemperatura.frio} leads</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Valor Total */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-center">
+                      <div className="text-sm text-gray-600">Valor Total do Pipeline</div>
+                      <div className="text-3xl font-bold text-gray-900">
+                        R$ {reportData.valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Botões de Ação */}
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      onClick={() => window.print()}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                      Imprimir Relatório
+                    </button>
+                    <button
+                      onClick={() => setShowReportModal(false)}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+                    >
+                      Fechar
+                    </button>
+                  </div>
+                </div>
+              )
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-</div>
-  )
-}
+
+export default DesignaliCreative
