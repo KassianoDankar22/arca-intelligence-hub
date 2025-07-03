@@ -6,36 +6,29 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Bell,
-  Brush,
-  Camera,
-  ChevronDown,
-  Code,
-  FileText,
-  Heart,
-  HomeIcon,
-  ImageIcon,
-  Layers,
-  ArrowDownUpIcon,
-  LayoutGrid,
   Menu,
+  PanelLeft,
   MessageSquare,
   MessageCircle,
-  Palette,
-  PanelLeft,
-  Search,
-  Settings,
+  Plus,
+  ImageIcon,
+  Brush,
+  Video,
   Sparkles,
+  Layers,
+  ArrowDownUpIcon,
+  Camera,
+  FileText,
+  Code,
+  CuboidIcon,
+  Type,
+  Palette,
+  Gauge,
+  BarChart3,
+  LayoutGrid,
   Star,
   Users,
-  Video,
-  Type,
-  CuboidIcon,
-  X,
-  Gauge,
-  Home,
-  BarChart3,
-  Plus,
-  Edit,
+  Heart,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -43,21 +36,17 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
-import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { UserIcon } from "@/components/ui/user-icon"
-import { ChartColumnIncreasingIcon } from "@/components/ui/chart-column-increasing-icon"
-import { CircleDollarSignIcon } from "@/components/ui/circle-dollar-sign-icon"
-import { CircleHelpIcon } from "@/components/ui/circle-help-icon"
 import { BackgroundBeams } from "@/components/ui/background-beams"
 import RoiToolInterface from "@/components/roi-tool-interface"
 import { StarBorder } from "@/components/ui/star-border"
 import { CRMDashboard } from "@/components/crm/CRMDashboard" // Import the new component
 import { LeadsTable } from "@/components/crm/LeadsTable" // Import the new LeadsTable component
 import { PipelineView } from "@/components/crm/PipelineView" // Import the new PipelineView component
+import { AgendaManager } from "@/components/crm/AgendaManager" // Import the new AgendaManager component
+import { Sidebar } from "@/components/layout/Sidebar" // Import the new Sidebar component
 
 // Definir interface para Compromisso
 interface Appointment {
@@ -405,43 +394,6 @@ const communityPosts = [
   },
 ]
 
-// Sample data for sidebar navigation
-const sidebarItems = [
-  {
-    title: "Home",
-    icon: <HomeIcon />,
-    isActive: true,
-    tabValue: "home",
-  },
-  {
-    title: "Agents Arca",
-    icon: <UserIcon />,
-    badge: "14", // Updated from "13" to "14" to reflect the new agent
-  },
-  {
-    title: "Arca AI Chat",
-    icon: <MessageCircle />,
-    tabValue: "files",
-  },
-  {
-    title: "CRM",
-    icon: <ChartColumnIncreasingIcon />,
-    tabValue: "learn",
-  },
-  {
-    title: "Financeiro",
-    icon: <CircleDollarSignIcon />,
-  },
-  {
-    title: "Suporte",
-    icon: <CircleHelpIcon />,
-  },
-  {
-    title: "Uso e Limites",
-    icon: <Gauge />,
-  },
-]
-
 export function DesignaliCreative() {
   const [notification, setNotification] = useState("")
 
@@ -450,7 +402,6 @@ export function DesignaliCreative() {
   const [activeTab, setActiveTab] = useState("home")
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isAgentsOpen, setIsAgentsOpen] = useState(true)
   const [savedROIs, setSavedROIs] = useState<any[]>([])
   const [favoriteAgents, setFavoriteAgents] = useState<string[]>([])
   const [activeRoiView, setActiveRoiView] = useState<"agents" | "my-rois" | "favorites">("agents")
@@ -459,17 +410,7 @@ export function DesignaliCreative() {
   const [showNewLeadModal, setShowNewLeadModal] = useState(false)
   const [activeCrmTab, setActiveCrmTab] = useState("dashboard")
   const [showReportModal, setShowReportModal] = useState(false)
-  const [newAppointmentTitle, setNewAppointmentTitle] = useState("")
-  const [newAppointmentDate, setNewAppointmentDate] = useState("")
-  const [newAppointmentTime, setNewAppointmentTime] = useState("")
-  const [newAppointmentType, setNewAppointmentType] = useState("")
-  const [newAppointmentRelatedLead, setNewAppointmentRelatedLead] = useState("")
-  const [newAppointmentReminder, setNewAppointmentReminder] = useState("")
-  const [newAppointmentLocation, setNewAppointmentLocation] = useState("")
-  const [newAppointmentNotes, setNewAppointmentNotes] = useState("")
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false)
-  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null)
-  const [completedTasks, setCompletedTasks] = useState<number[]>([])
+
   const [newAppointments, setNewAppointments] = useState<Appointment[]>([
     {
       id: 1,
@@ -538,6 +479,7 @@ export function DesignaliCreative() {
       notes: "Apresentação de ROI para investimento",
     },
   ])
+  const [completedTasks, setCompletedTasks] = useState<number[]>([])
 
   const [leadsList, setLeadsList] = useState<Lead[]>([
     {
@@ -614,6 +556,9 @@ export function DesignaliCreative() {
     orcamento: "",
     observacoes: "",
   })
+
+  const [draggedLead, setDraggedLead] = useState<Lead | null>(null)
+  const [dragOverColumn, setDragOverColumn] = useState("")
 
   // Função para gerar dados do relatório
   const generateReportData = () => {
@@ -729,95 +674,30 @@ export function DesignaliCreative() {
     }))
   }
 
-  const toggleTaskCompletion = (taskIndex: number) => {
-    setCompletedTasks((prev) => {
-      if (prev.includes(taskIndex)) {
-        return prev.filter((index) => index !== taskIndex)
-      } else {
-        return [...prev, taskIndex]
-      }
-    })
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, lead: Lead) => {
+    setDraggedLead(lead)
+    e.dataTransfer.effectAllowed = "move"
   }
 
-  const openAppointmentModal = (appointmentToEdit: Appointment | null = null) => {
-    if (appointmentToEdit) {
-      setEditingAppointment(appointmentToEdit)
-      setNewAppointmentTitle(appointmentToEdit.title)
-      setNewAppointmentDate(appointmentToEdit.date)
-      setNewAppointmentTime(appointmentToEdit.time)
-      setNewAppointmentType(appointmentToEdit.type)
-      setNewAppointmentRelatedLead(appointmentToEdit.relatedLead)
-      setNewAppointmentReminder(appointmentToEdit.reminder)
-      setNewAppointmentLocation(appointmentToEdit.location)
-      setNewAppointmentNotes(appointmentToEdit.notes)
-    } else {
-      setEditingAppointment(null)
-      setNewAppointmentTitle("")
-      setNewAppointmentDate("")
-      setNewAppointmentTime("")
-      setNewAppointmentType("")
-      setNewAppointmentRelatedLead("")
-      setNewAppointmentReminder("")
-      setNewAppointmentLocation("")
-      setNewAppointmentNotes("")
-    }
-    setShowAppointmentModal(true)
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, columnStatus: string) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setDragOverColumn(columnStatus)
   }
 
-  const handleSaveOrUpdateAppointment = () => {
-    if (!newAppointmentTitle || !newAppointmentDate || !newAppointmentTime) {
-      alert("Por favor, preencha o título, data e horário do compromisso.")
-      return
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, newStatus: string) => {
+    e.preventDefault()
+    if (draggedLead && draggedLead.status !== newStatus) {
+      updateLeadStatus(draggedLead.id, newStatus)
     }
-
-    const appointmentData = {
-      title: newAppointmentTitle,
-      date: newAppointmentDate,
-      time: newAppointmentTime,
-      type: newAppointmentType,
-      relatedLead: newAppointmentRelatedLead,
-      reminder: newAppointmentReminder,
-      location: newAppointmentLocation,
-      notes: newAppointmentNotes,
-    }
-
-    if (editingAppointment) {
-      setNewAppointments((prev) =>
-        prev.map((app) => (app.id === editingAppointment.id ? { ...app, ...appointmentData } : app)),
-      )
-      setNotification("Compromisso atualizado com sucesso!")
-    } else {
-      const newId = newAppointments.length > 0 ? Math.max(...newAppointments.map((a) => a.id)) + 1 : 1
-      setNewAppointments((prev) => [...prev, { id: newId, ...appointmentData }])
-      setNotification("Compromisso salvo com sucesso!")
-    }
-
-    setShowAppointmentModal(false)
-    setEditingAppointment(null)
-    setNewAppointmentTitle("")
-    setNewAppointmentDate("")
-    setNewAppointmentTime("")
-    setNewAppointmentType("")
-    setNewAppointmentRelatedLead("")
-    setNewAppointmentReminder("")
-    setNewAppointmentLocation("")
-    setNewAppointmentNotes("")
-
-    setTimeout(() => setNotification(""), 3000)
+    setDraggedLead(null)
+    setDragOverColumn("")
   }
 
-  const today = new Date().toISOString().split("T")[0]
-  const appointmentsToday = newAppointments
-    .filter((appointment) => appointment.date === today)
-    .sort((a, b) => a.time.localeCompare(b.time))
-
-  const upcomingAppointments = newAppointments
-    .filter((appointment) => appointment.date > today)
-    .sort((a, b) => {
-      const dateA = new Date(`${a.date}T${a.time}`)
-      const dateB = new Date(`${b.date}T${b.time}`)
-      return dateA.getTime() - dateB.getTime()
-    })
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setDragOverColumn("")
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
@@ -835,349 +715,18 @@ export function DesignaliCreative() {
         transition={{ duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
       />
 
-      {/* Mobile menu overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setMobileMenuOpen(false)} />
-      )}
-
-      {/* Sidebar - Mobile */}
-      <div
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform bg-background transition-transform duration-300 ease-in-out md:hidden",
-          mobileMenuOpen ? "translate-x-0" : "-translate-x-full",
-        )}
-      >
-        <div className="flex h-full flex-col border-r">
-          <div className="flex items-center justify-center p-4">
-            <Image
-              src="/logo-arca.png"
-              alt="Arca Intelligence Logo"
-              width={48}
-              height={48}
-              className="object-contain"
-            />
-            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="absolute right-4">
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-
-          <div className="px-3 py-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="Search..." className="w-full rounded-2xl bg-muted pl-9 pr-4 py-2" />
-            </div>
-          </div>
-
-          <ScrollArea className="flex-1 px-3 py-2">
-            <div className="space-y-1">
-              {sidebarItems.map((item) => {
-                if (item.title === "Agents Arca") {
-                  return (
-                    <div key={item.title} className="mb-1">
-                      <button
-                        onClick={() => setIsAgentsOpen(!isAgentsOpen)}
-                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <UserIcon className="h-5 w-5 text-gray-600" />
-                          <span className="text-sm text-gray-700">Agents Arca</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">14</span>
-                          <ChevronDown
-                            className={`h-4 w-4 text-gray-600 transition-transform ${isAgentsOpen ? "rotate-180" : ""}`}
-                          />
-                        </div>
-                      </button>
-
-                      {isAgentsOpen && (
-                        <div className="ml-4 mt-1 space-y-1">
-                          <button
-                            onClick={() => {
-                              setActiveTab("apps")
-                              setShowRoiTool(false)
-                              setActiveRoiView("agents")
-                            }}
-                            className={`w-full text-left p-3 rounded-lg transition-all flex items-center gap-3 text-sm ${
-                              activeRoiView === "agents"
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            <Home className="h-3.5 w-3.5" />
-                            <span>Todos os Agents</span>
-                          </button>
-
-                          <button
-                            onClick={() => handleNavigate("my-rois")}
-                            className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
-                              activeRoiView === "my-rois"
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <BarChart3 className="h-3.5 w-3.5" />
-                              <span>Meus ROIs</span>
-                            </div>
-                            {savedROIs.length > 0 && (
-                              <span className="bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-                                {savedROIs.length}
-                              </span>
-                            )}
-                          </button>
-
-                          <button
-                            onClick={() => handleNavigate("favorites")}
-                            className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
-                              activeRoiView === "favorites"
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <Star className="h-3.5 w-3.5" />
-                              <span>Favoritos</span>
-                            </div>
-                            {favoriteAgents.length > 0 && (
-                              <span className="bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                                {favoriteAgents.length}
-                              </span>
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )
-                } else {
-                  return (
-                    <div key={item.title} className="mb-1">
-                      <button
-                        className={cn(
-                          "flex w-full items-center justify-between p-3 rounded-lg text-sm font-medium transition-colors",
-                          item.isActive ? "bg-primary/10 text-primary" : "hover:bg-gray-100",
-                        )}
-                        onClick={() => {
-                          if (item.tabValue) {
-                            setActiveTab(item.tabValue)
-                            if (item.tabValue === "learn") {
-                              setActiveCrmTab("dashboard")
-                            }
-                          }
-                        }}
-                      >
-                        <div className="flex items-center gap-3">
-                          {item.title === "Home" && <HomeIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Arca AI Chat" && <MessageCircle className="h-5 w-5 text-gray-600" />}
-                          {item.title === "CRM" && <ChartColumnIncreasingIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Financeiro" && <CircleDollarSignIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Suporte" && <CircleHelpIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Uso e Limites" && <Gauge className="h-5 w-5 text-gray-600" />}
-                          <span className="text-sm text-gray-700">{item.title}</span>
-                        </div>
-                        {item.badge && (
-                          <Badge variant="outline" className="ml-auto rounded-full px-2 py-0.5 text-xs">
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </button>
-                    </div>
-                  )
-                }
-              })}
-            </div>
-          </ScrollArea>
-
-          <div className="border-t p-3">
-            <div className="space-y-1">
-              <button className="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium hover:bg-muted">
-                <Settings className="h-5 w-5" />
-                <span>Configurações</span>
-              </button>
-              <button className="flex w-full items-center justify-between rounded-2xl px-3 py-2 text-sm font-medium hover:bg-muted">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <span>John Doe</span>
-                </div>
-                <Badge variant="outline" className="ml-auto">
-                  Pro
-                </Badge>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sidebar - Desktop */}
-      <div
-        className={cn(
-          "fixed inset-y-0 left-0 z-30 hidden h-full w-64 flex-col border-r bg-background transition-transform duration-300 ease-in-out md:flex",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full",
-        )}
-      >
-        <div className="flex h-full flex-col border-r">
-          <div className="flex items-center justify-center p-4">
-            <Image
-              src="/logo-arca.png"
-              alt="Arca Intelligence Logo"
-              width={48}
-              height={48}
-              className="object-contain"
-            />
-          </div>
-
-          <div className="px-3 py-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="Search..." className="w-full rounded-2xl bg-muted pl-9 pr-4 py-2" />
-            </div>
-          </div>
-
-          <ScrollArea className="flex-1 px-3 py-2">
-            <div className="space-y-1">
-              {sidebarItems.map((item) => {
-                if (item.title === "Agents Arca") {
-                  return (
-                    <div key={item.title} className="mb-1">
-                      <button
-                        onClick={() => setIsAgentsOpen(!isAgentsOpen)}
-                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <UserIcon className="h-5 w-5 text-gray-600" />
-                          <span className="text-sm text-gray-700">Agents Arca</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">14</span>
-                          <ChevronDown
-                            className={`h-4 w-4 text-gray-600 transition-transform ${isAgentsOpen ? "rotate-180" : ""}`}
-                          />
-                        </div>
-                      </button>
-
-                      {isAgentsOpen && (
-                        <div className="ml-4 mt-1 space-y-1">
-                          <button
-                            onClick={() => {
-                              setActiveTab("apps")
-                              setShowRoiTool(false)
-                              setActiveRoiView("agents")
-                            }}
-                            className={`w-full text-left p-3 rounded-lg transition-all flex items-center gap-3 text-sm ${
-                              activeRoiView === "agents"
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            <Home className="h-3.5 w-3.5" />
-                            <span>Todos os Agents</span>
-                          </button>
-
-                          <button
-                            onClick={() => handleNavigate("my-rois")}
-                            className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
-                              activeRoiView === "my-rois"
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <BarChart3 className="h-3.5 w-3.5" />
-                              <span>Meus ROIs</span>
-                            </div>
-                            {savedROIs.length > 0 && (
-                              <span className="bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded-full">
-                                {savedROIs.length}
-                              </span>
-                            )}
-                          </button>
-
-                          <button
-                            onClick={() => handleNavigate("favorites")}
-                            className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
-                              activeRoiView === "favorites"
-                                ? "bg-blue-50 text-blue-600 font-medium"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <Star className="h-3.5 w-3.5" />
-                              <span>Favoritos</span>
-                            </div>
-                            {favoriteAgents.length > 0 && (
-                              <span className="bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                                {favoriteAgents.length}
-                              </span>
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )
-                } else {
-                  return (
-                    <div key={item.title} className="mb-1">
-                      <button
-                        className={cn(
-                          "flex w-full items-center justify-between p-3 rounded-lg text-sm font-medium transition-colors",
-                          item.isActive ? "bg-primary/10 text-primary" : "hover:bg-gray-100",
-                        )}
-                        onClick={() => {
-                          if (item.tabValue) {
-                            setActiveTab(item.tabValue)
-                            if (item.tabValue === "learn") {
-                              setActiveCrmTab("dashboard")
-                            }
-                          }
-                        }}
-                      >
-                        <div className="flex items-center gap-3">
-                          {item.title === "Home" && <HomeIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Arca AI Chat" && <MessageCircle className="h-5 w-5 text-gray-600" />}
-                          {item.title === "CRM" && <ChartColumnIncreasingIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Financeiro" && <CircleDollarSignIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Suporte" && <CircleHelpIcon className="h-5 w-5 text-gray-600" />}
-                          {item.title === "Uso e Limites" && <Gauge className="h-5 w-5 text-gray-600" />}
-                          <span className="text-sm text-gray-700">{item.title}</span>
-                        </div>
-                        {item.badge && (
-                          <Badge variant="outline" className="ml-auto rounded-full px-2 py-0.5 text-xs">
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </button>
-                    </div>
-                  )
-                }
-              })}
-            </div>
-          </ScrollArea>
-
-          <div className="border-t p-3">
-            <div className="space-y-1">
-              <button className="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium hover:bg-muted">
-                <Settings className="h-5 w-5" />
-                <span>Configurações</span>
-              </button>
-              <button className="flex w-full items-center justify-between rounded-2xl px-3 py-2 text-sm font-medium hover:bg-muted">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                  <span>John Doe</span>
-                </div>
-                <Badge variant="outline" className="ml-auto">
-                  Pro
-                </Badge>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activeCrmTab={activeCrmTab}
+        setActiveCrmTab={setActiveCrmTab}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        savedROIsCount={savedROIs.length}
+        favoriteAgentsCount={favoriteAgents.length}
+        setShowRoiTool={setShowRoiTool}
+        setActiveRoiView={setActiveRoiView}
+      />
 
       {/* Main Content */}
       <div className={cn("min-h-screen transition-all duration-300 ease-in-out", sidebarOpen ? "md:pl-64" : "md:pl-0")}>
@@ -1522,7 +1071,6 @@ export function DesignaliCreative() {
                         </Button>
                         <div className="flex-1"></div>
                         <div className="relative w-full md:w-auto mt-3 md:mt-0">
-                          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             type="search"
                             placeholder="Procurar Agents..."
@@ -1753,192 +1301,15 @@ export function DesignaliCreative() {
                     )}
 
                     {activeCrmTab === "agenda" && (
-                      <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                          <h3 className="text-lg font-semibold">Agenda e Compromissos</h3>
-                          <button
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
-                            onClick={() => openAppointmentModal()}
-                          >
-                            + Novo Compromisso
-                          </button>
-                        </div>
-
-                        {notification && (
-                          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center justify-between">
-                            <span>{notification}</span>
-                            <button onClick={() => setNotification("")} className="text-green-700 hover:text-green-900">
-                              ✕
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                          <div className="lg:col-span-2">
-                            <Card className="rounded-2xl">
-                              <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                  <Bell className="h-5 w-5" />
-                                  Compromissos de Hoje
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                {appointmentsToday.length === 0 ? (
-                                  <div className="text-center py-8 text-gray-500">
-                                    <Bell className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                                    <p>Nenhum compromisso para hoje</p>
-                                  </div>
-                                ) : (
-                                  <div className="space-y-4">
-                                    {appointmentsToday.map((appointment) => (
-                                      <div
-                                        key={appointment.id}
-                                        className="flex items-center justify-between p-4 bg-blue-50 rounded-xl"
-                                      >
-                                        <div className="flex items-center gap-4">
-                                          <div className="text-center">
-                                            <div className="text-lg font-bold text-blue-600">
-                                              {appointment.time.split(":")[0]}
-                                            </div>
-                                            <div className="text-sm text-blue-500">
-                                              {appointment.time.split(":")[1]}
-                                            </div>
-                                          </div>
-                                          <div>
-                                            <h4 className="font-semibold">{appointment.title}</h4>
-                                            <p className="text-sm text-gray-600">{appointment.location}</p>
-                                            {appointment.relatedLead !== "sem-lead" && (
-                                              <p className="text-xs text-blue-600">Lead: {appointment.relatedLead}</p>
-                                            )}
-                                          </div>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                          <span
-                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                              appointment.type === "reuniao"
-                                                ? "bg-blue-100 text-blue-800"
-                                                : appointment.type === "visita"
-                                                  ? "bg-green-100 text-green-800"
-                                                  : appointment.type === "ligacao"
-                                                    ? "bg-yellow-100 text-yellow-800"
-                                                    : "bg-purple-100 text-purple-800"
-                                            }`}
-                                          >
-                                            {appointment.type === "reuniao"
-                                              ? "Reunião"
-                                              : appointment.type === "visita"
-                                                ? "Visita"
-                                                : appointment.type === "ligacao"
-                                                  ? "Ligação"
-                                                  : "Apresentação"}
-                                          </span>
-                                          <button
-                                            onClick={() => openAppointmentModal(appointment)}
-                                            className="text-blue-600 hover:text-blue-800"
-                                          >
-                                            <Edit className="h-4 w-4" />
-                                          </button>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </CardContent>
-                            </Card>
-                          </div>
-
-                          <div>
-                            <Card className="rounded-2xl">
-                              <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                  <Bell className="h-5 w-5" />
-                                  Próximos Compromissos
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                {upcomingAppointments.length === 0 ? (
-                                  <div className="text-center py-8 text-gray-500">
-                                    <Bell className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                                    <p>Nenhum compromisso futuro</p>
-                                  </div>
-                                ) : (
-                                  <div className="space-y-4">
-                                    {upcomingAppointments.slice(0, 5).map((appointment) => (
-                                      <div
-                                        key={appointment.id}
-                                        className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
-                                      >
-                                        <div className="text-center min-w-[60px]">
-                                          <div className="text-sm font-bold text-gray-700">
-                                            {new Date(appointment.date).toLocaleDateString("pt-BR", {
-                                              day: "2-digit",
-                                              month: "short",
-                                            })}
-                                          </div>
-                                          <div className="text-xs text-gray-500">{appointment.time}</div>
-                                        </div>
-                                        <div className="flex-1">
-                                          <h4 className="font-medium text-sm">{appointment.title}</h4>
-                                          <p className="text-xs text-gray-600">{appointment.location}</p>
-                                          {appointment.relatedLead !== "sem-lead" && (
-                                            <p className="text-xs text-blue-600">Lead: {appointment.relatedLead}</p>
-                                          )}
-                                        </div>
-                                        <button
-                                          onClick={() => openAppointmentModal(appointment)}
-                                          className="text-gray-400 hover:text-gray-600"
-                                        >
-                                          <Edit className="h-3 w-3" />
-                                        </button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </CardContent>
-                            </Card>
-                          </div>
-                        </div>
-
-                        <Card className="rounded-2xl">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                              <FileText className="h-5 w-5" />
-                              Tarefas Pendentes
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-3">
-                              {[
-                                "Enviar proposta para Maria Silva",
-                                "Agendar visita com João Santos",
-                                "Follow-up com Carlos Lima",
-                                "Preparar apresentação para Ana Costa",
-                                "Atualizar CRM com novos leads",
-                                "Revisar contratos pendentes",
-                              ].map((task, index) => (
-                                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                  <input
-                                    type="checkbox"
-                                    checked={completedTasks.includes(index)}
-                                    onChange={() => toggleTaskCompletion(index)}
-                                    className="h-4 w-4 text-blue-600 rounded"
-                                  />
-                                  <span
-                                    className={`flex-1 text-sm ${
-                                      completedTasks.includes(index) ? "line-through text-gray-500" : "text-gray-700"
-                                    }`}
-                                  >
-                                    {task}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    {completedTasks.includes(index) ? "Concluída" : "Pendente"}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
+                      <AgendaManager
+                        appointments={newAppointments}
+                        setAppointments={setNewAppointments}
+                        tasks={completedTasks}
+                        setTasks={setCompletedTasks}
+                        leadsList={leadsList}
+                        notification={notification}
+                        setNotification={setNotification}
+                      />
                     )}
 
                     {showNewLeadModal && (
@@ -2216,142 +1587,6 @@ export function DesignaliCreative() {
                             </button>
                             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                               Exportar PDF
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {showAppointmentModal && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-                          <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">
-                              {editingAppointment ? "Editar Compromisso" : "Novo Compromisso"}
-                            </h3>
-                            <button
-                              onClick={() => setShowAppointmentModal(false)}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              ✕
-                            </button>
-                          </div>
-
-                          <div className="space-y-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
-                              <input
-                                type="text"
-                                value={newAppointmentTitle}
-                                onChange={(e) => setNewAppointmentTitle(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Ex: Reunião com cliente"
-                              />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Data *</label>
-                                <input
-                                  type="date"
-                                  value={newAppointmentDate}
-                                  onChange={(e) => setNewAppointmentDate(e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Horário *</label>
-                                <input
-                                  type="time"
-                                  value={newAppointmentTime}
-                                  onChange={(e) => setNewAppointmentTime(e.target.value)}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                />
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                              <select
-                                value={newAppointmentType}
-                                onChange={(e) => setNewAppointmentType(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              >
-                                <option value="">Selecione o tipo</option>
-                                <option value="reuniao">Reunião</option>
-                                <option value="visita">Visita</option>
-                                <option value="ligacao">Ligação</option>
-                                <option value="apresentacao">Apresentação</option>
-                              </select>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Lead Relacionado</label>
-                              <select
-                                value={newAppointmentRelatedLead}
-                                onChange={(e) => setNewAppointmentRelatedLead(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              >
-                                <option value="">Selecione um lead</option>
-                                <option value="sem-lead">Sem lead relacionado</option>
-                                {leadsList.map((lead) => (
-                                  <option key={lead.id} value={lead.nome}>
-                                    {lead.nome}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Lembrete</label>
-                              <select
-                                value={newAppointmentReminder}
-                                onChange={(e) => setNewAppointmentReminder(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              >
-                                <option value="">Sem lembrete</option>
-                                <option value="15min">15 minutos antes</option>
-                                <option value="30min">30 minutos antes</option>
-                                <option value="1hora">1 hora antes</option>
-                                <option value="1dia">1 dia antes</option>
-                              </select>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Local</label>
-                              <input
-                                type="text"
-                                value={newAppointmentLocation}
-                                onChange={(e) => setNewAppointmentLocation(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Ex: Escritório, Endereço, Videochamada"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
-                              <textarea
-                                value={newAppointmentNotes}
-                                onChange={(e) => setNewAppointmentNotes(e.target.value)}
-                                rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Observações adicionais..."
-                              />
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end gap-3 mt-6">
-                            <button
-                              onClick={() => setShowAppointmentModal(false)}
-                              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
-                            >
-                              Cancelar
-                            </button>
-                            <button
-                              onClick={handleSaveOrUpdateAppointment}
-                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                            >
-                              {editingAppointment ? "Atualizar" : "Salvar"}
                             </button>
                           </div>
                         </div>
