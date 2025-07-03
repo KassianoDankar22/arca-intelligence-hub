@@ -56,6 +56,7 @@ import { BackgroundBeams } from "@/components/ui/background-beams"
 import RoiToolInterface from "@/components/roi-tool-interface"
 import { StarBorder } from "@/components/ui/star-border"
 import { CRMDashboard } from "@/components/crm/CRMDashboard" // Import the new component
+import { LeadsTable } from "@/components/crm/LeadsTable" // Import the new LeadsTable component
 
 // Definir interface para Compromisso
 interface Appointment {
@@ -426,9 +427,6 @@ const sidebarItems = [
 ]
 
 export function DesignaliCreative() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("")
-  const [sourceFilter, setSourceFilter] = useState("")
   const [notification, setNotification] = useState("")
 
   const [progress, setProgress] = useState(0)
@@ -444,11 +442,7 @@ export function DesignaliCreative() {
   const [selectedCategory, setSelectedCategory] = useState("Todas as Categorias")
   const [showNewLeadModal, setShowNewLeadModal] = useState(false)
   const [activeCrmTab, setActiveCrmTab] = useState("dashboard")
-  const [showLeadModal, setShowLeadModal] = useState(false)
-  const [selectedLead, setSelectedLead] = useState<any>(null)
-  const [actionType, setActionType] = useState("")
   const [showReportModal, setShowReportModal] = useState(false)
-  const [temperaturaFilter, setTemperaturaFilter] = useState("")
   const [newAppointmentTitle, setNewAppointmentTitle] = useState("")
   const [newAppointmentDate, setNewAppointmentDate] = useState("")
   const [newAppointmentTime, setNewAppointmentTime] = useState("")
@@ -691,9 +685,9 @@ export function DesignaliCreative() {
         telefone: leadFormData.telefone,
         fonte: leadFormData.fonte,
         tipoInteresse: leadFormData.tipoInteresse,
-        temperatura: leadFormData.temperatura,
         orcamento: Number.parseFloat(leadFormData.orcamento.replace(/[^0-9.]/g, "")) || 0,
         status: "Novo",
+        temperatura: leadFormData.temperatura,
         data: new Date().toLocaleDateString("pt-BR"),
         observacoes: leadFormData.observacoes,
       }
@@ -714,50 +708,12 @@ export function DesignaliCreative() {
     }
   }
 
-  const handleViewLead = (lead: any) => {
-    setSelectedLead(lead)
-    setActionType("view")
-    setShowLeadModal(true)
-  }
-
-  const handleCallLead = (lead: any) => {
-    setSelectedLead(lead)
-    setActionType("call")
-    setShowLeadModal(true)
-  }
-
-  const handleEmailLead = (lead: any) => {
-    setSelectedLead(lead)
-    setActionType("email")
-    setShowLeadModal(true)
-  }
-
-  const handleEditLead = (lead: any) => {
-    setSelectedLead(lead)
-    setLeadFormData({
-      nome: lead.nome,
-      email: lead.email,
-      telefone: lead.telefone,
-      fonte: lead.fonte,
-      tipoInteresse: lead.tipoInteresse,
-      temperatura: lead.temperatura,
-      orcamento: lead.orcamento.toString(),
-      observacoes: lead.observacoes || "",
-    })
-    setActionType("edit")
-    setShowLeadModal(true)
-  }
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setLeadFormData((prev) => ({
       ...prev,
       [name]: value,
     }))
-  }
-
-  const handleUpdateLead = () => {
-    console.log("Update Lead function will be implemented next!")
   }
 
   const handleDragStart = (e, lead) => {
@@ -1779,257 +1735,29 @@ export function DesignaliCreative() {
                     {activeCrmTab === "dashboard" && (
                       <CRMDashboard
                         leadsList={leadsList}
-                        searchTerm={searchTerm}
-                        setSearchTerm={setSearchTerm}
-                        statusFilter={statusFilter}
-                        setStatusFilter={setStatusFilter}
-                        sourceFilter={sourceFilter}
-                        setSourceFilter={setSourceFilter}
-                        temperaturaFilter={temperaturaFilter}
-                        setTemperaturaFilter={setTemperaturaFilter}
-                        handleViewLead={handleViewLead}
-                        handleEditLead={handleEditLead}
-                        handleCallLead={handleCallLead}
-                        handleEmailLead={handleEmailLead}
+                        searchTerm={""} // searchTerm is now managed by LeadsTable
+                        setSearchTerm={() => {}} // setSearchTerm is now managed by LeadsTable
+                        statusFilter={""} // statusFilter is now managed by LeadsTable
+                        setStatusFilter={() => {}} // setStatusFilter is now managed by LeadsTable
+                        sourceFilter={""} // sourceFilter is now managed by LeadsTable
+                        setSourceFilter={() => {}} // setSourceFilter is now managed by LeadsTable
+                        temperaturaFilter={""} // temperaturaFilter is now managed by LeadsTable
+                        setTemperaturaFilter={() => {}} // setTemperaturaFilter is now managed by LeadsTable
+                        handleViewLead={() => {}} // handleViewLead is now managed by LeadsTable
+                        handleEditLead={() => {}} // handleEditLead is now managed by LeadsTable
+                        handleCallLead={() => {}} // handleCallLead is now managed by LeadsTable
+                        handleEmailLead={() => {}} // handleEmailLead is now managed by LeadsTable
                         updateLeadStatus={updateLeadStatus}
                       />
                     )}
 
                     {activeCrmTab === "leads" && (
-                      <div>
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                          <div className="relative w-full sm:w-auto">
-                            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              type="search"
-                              placeholder="Buscar leads..."
-                              className="w-full rounded-2xl pl-9"
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                          </div>
-
-                          <div className="flex items-center gap-3">
-                            <select
-                              value={statusFilter}
-                              onChange={(e) => setStatusFilter(e.target.value)}
-                              className="px-4 py-2 border border-gray-300 rounded-lg"
-                            >
-                              <option value="">Todos os Status</option>
-                              <option value="Novo">Novo</option>
-                              <option value="Qualificado">Qualificado</option>
-                              <option value="Proposta">Proposta</option>
-                              <option value="Negociação">Negociação</option>
-                              <option value="Fechado">Fechado</option>
-                              <option value="Descartado">Descartado</option>
-                            </select>
-
-                            <select
-                              value={sourceFilter}
-                              onChange={(e) => setSourceFilter(e.target.value)}
-                              className="px-4 py-2 border border-gray-300 rounded-lg"
-                            >
-                              <option value="">Todas as Fontes</option>
-                              <option value="Site">Site</option>
-                              <option value="Google">Google</option>
-                              <option value="Instagram">Instagram</option>
-                              <option value="Recomendacao">Recomendação</option>
-                            </select>
-
-                            <select
-                              value={temperaturaFilter}
-                              onChange={(e) => setTemperaturaFilter(e.target.value)}
-                              className="px-4 py-2 border border-gray-300 rounded-lg"
-                            >
-                              <option value="">Todas as Qualificações</option>
-                              <option value="Quente">🔥 Quente</option>
-                              <option value="Morno">🌡️ Morno</option>
-                              <option value="Frio">❄️ Frio</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="mb-4 flex items-center justify-between">
-                          <p className="text-sm text-gray-600">
-                            Mostrando{" "}
-                            {
-                              leadsList.filter((lead) => {
-                                const matchesSearch =
-                                  lead.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                  lead.email.toLowerCase().includes(searchTerm.toLowerCase())
-                                const matchesStatus = statusFilter === "" || lead.status === statusFilter
-                                const matchesSource = sourceFilter === "" || lead.fonte === sourceFilter
-                                const matchesTemperatura =
-                                  temperaturaFilter === "" || lead.temperatura === temperaturaFilter
-                                return matchesSearch && matchesStatus && matchesSource && matchesTemperatura
-                              }).length
-                            }{" "}
-                            de {leadsList.length} leads
-                          </p>
-                          {(searchTerm || statusFilter || sourceFilter || temperaturaFilter) && (
-                            <button
-                              onClick={() => {
-                                setSearchTerm("")
-                                setStatusFilter("")
-                                setSourceFilter("")
-                                setTemperaturaFilter("")
-                              }}
-                              className="text-sm text-blue-600 hover:text-blue-800"
-                            >
-                              Limpar filtros
-                            </button>
-                          )}
-                        </div>
-
-                        <div>
-                          <table className="w-full min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th className="w-[15%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Nome
-                                </th>
-                                <th className="w-[15%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Email
-                                </th>
-                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Telefone
-                                </th>
-                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Fonte
-                                </th>
-                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Tipo de Interesse
-                                </th>
-                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  QUALIFICAÇÃO
-                                </th>
-                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Orçamento
-                                </th>
-                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Status
-                                </th>
-                                <th className="w-[4%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Data
-                                </th>
-                                <th className="px-2 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                  Ações
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {leadsList
-                                .filter((lead) => {
-                                  const matchesSearch =
-                                    lead.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                    lead.email.toLowerCase().includes(searchTerm.toLowerCase())
-                                  const matchesStatus = statusFilter === "" || lead.status === statusFilter
-                                  const matchesSource = sourceFilter === "" || lead.fonte === sourceFilter
-                                  const matchesTemperatura =
-                                    temperaturaFilter === "" || lead.temperatura === temperaturaFilter
-                                  return matchesSearch && matchesStatus && matchesSource && matchesTemperatura
-                                })
-                                .map((lead) => (
-                                  <tr key={lead.id} className="hover:bg-gray-50">
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                      {lead.nome}
-                                    </td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.email}</td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                      {lead.telefone}
-                                    </td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.fonte}</td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                      {lead.tipoInteresse}
-                                    </td>
-                                    <td className="px-2 py-4 whitespace-nowrap">
-                                      <span
-                                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                          lead.temperatura === "Quente"
-                                            ? "bg-red-100 text-red-800"
-                                            : lead.temperatura === "Morno"
-                                              ? "bg-yellow-100 text-yellow-800"
-                                              : lead.temperatura === "Frio"
-                                                ? "bg-blue-100 text-blue-800"
-                                                : "bg-gray-100 text-gray-800"
-                                        }`}
-                                      >
-                                        {lead.temperatura === "Quente"
-                                          ? "🔥 Quente"
-                                          : lead.temperatura === "Morno"
-                                            ? "🌡️ Morno"
-                                            : lead.temperatura === "Frio"
-                                              ? "❄️ Frio"
-                                              : "Não definido"}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
-                                      {lead.orcamento.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                      })}
-                                    </td>
-                                    <td className="px-2 py-4 whitespace-nowrap">
-                                      <select
-                                        value={lead.status}
-                                        onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
-                                        className={`px-2 py-1 rounded-full text-xs font-medium border-none focus:ring-2 focus:ring-blue-500 ${
-                                          lead.status === "Novo"
-                                            ? "bg-blue-100 text-blue-800"
-                                            : lead.status === "Qualificado"
-                                              ? "bg-green-100 text-green-800"
-                                              : lead.status === "Proposta"
-                                                ? "bg-yellow-100 text-yellow-800"
-                                                : lead.status === "Negociação"
-                                                  ? "bg-orange-100 text-orange-800"
-                                                  : lead.status === "Fechado"
-                                                    ? "bg-emerald-100 text-emerald-800"
-                                                    : "bg-gray-100 text-gray-800"
-                                        }`}
-                                      >
-                                        <option value="Novo">Novo</option>
-                                        <option value="Qualificado">Qualificado</option>
-                                        <option value="Proposta">Proposta</option>
-                                        <option value="Negociação">Negociação</option>
-                                        <option value="Fechado">Fechado</option>
-                                        <option value="Descartado">Descartado</option>
-                                      </select>
-                                    </td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.data}</td>
-                                    <td className="px-2 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                      <div className="flex justify-end gap-2">
-                                        <button
-                                          onClick={() => handleViewLead(lead)}
-                                          className="text-blue-600 hover:text-blue-800"
-                                        >
-                                          Ver
-                                        </button>
-                                        <button
-                                          onClick={() => handleEditLead(lead)}
-                                          className="text-green-600 hover:text-green-800"
-                                        >
-                                          Editar
-                                        </button>
-                                        <button
-                                          onClick={() => handleCallLead(lead)}
-                                          className="text-green-600 hover:text-green-800"
-                                        >
-                                          Ligar
-                                        </button>
-                                        <button
-                                          onClick={() => handleEmailLead(lead)}
-                                          className="text-purple-600 hover:text-purple-800"
-                                        >
-                                          Email
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
+                      <LeadsTable
+                        leadsList={leadsList}
+                        updateLeadStatus={updateLeadStatus}
+                        notification={notification}
+                        setNotification={setNotification}
+                      />
                     )}
 
                     {activeCrmTab === "pipeline" && (
@@ -2071,7 +1799,9 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    onClick={() => handleViewLead(lead)}
+                                    onClick={() => {
+                                      /* handleViewLead(lead) */
+                                    }} // Removed direct call, now handled by LeadsTable
                                     draggable="true"
                                     onDragStart={(e) => handleDragStart(e, lead)}
                                     className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
@@ -2120,7 +1850,9 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    onClick={() => handleViewLead(lead)}
+                                    onClick={() => {
+                                      /* handleViewLead(lead) */
+                                    }} // Removed direct call, now handled by LeadsTable
                                     draggable="true"
                                     onDragStart={(e) => handleDragStart(e, lead)}
                                     className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
@@ -2169,7 +1901,9 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    onClick={() => handleViewLead(lead)}
+                                    onClick={() => {
+                                      /* handleViewLead(lead) */
+                                    }} // Removed direct call, now handled by LeadsTable
                                     draggable="true"
                                     onDragStart={(e) => handleDragStart(e, lead)}
                                     className="bg-white p-3 rounded-lg border border-yellow-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
@@ -2218,7 +1952,9 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    onClick={() => handleViewLead(lead)}
+                                    onClick={() => {
+                                      /* handleViewLead(lead) */
+                                    }} // Removed direct call, now handled by LeadsTable
                                     draggable="true"
                                     onDragStart={(e) => handleDragStart(e, lead)}
                                     className="bg-white p-3 rounded-lg border border-orange-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
@@ -2267,7 +2003,9 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    onClick={() => handleViewLead(lead)}
+                                    onClick={() => {
+                                      /* handleViewLead(lead) */
+                                    }} // Removed direct call, now handled by LeadsTable
                                     draggable="true"
                                     onDragStart={(e) => handleDragStart(e, lead)}
                                     className="bg-white p-3 rounded-lg border border-green-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
@@ -2645,275 +2383,6 @@ export function DesignaliCreative() {
                             >
                               Salvar Lead
                             </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {showLeadModal && selectedLead && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                          <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">
-                              {actionType === "view"
-                                ? "Detalhes do Lead"
-                                : actionType === "edit"
-                                  ? "Editar Lead"
-                                  : actionType === "call"
-                                    ? "Ligar para Lead"
-                                    : "Enviar Email"}
-                            </h3>
-                            <button
-                              onClick={() => setShowLeadModal(false)}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              ✕
-                            </button>
-                          </div>
-
-                          {actionType === "view" && (
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Nome</label>
-                                  <p className="text-gray-900">{selectedLead.nome}</p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                                  <p className="text-gray-900">{selectedLead.email}</p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Telefone</label>
-                                  <p className="text-gray-900">{selectedLead.telefone}</p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Fonte</label>
-                                  <p className="text-gray-900">{selectedLead.fonte}</p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Tipo de Interesse</label>
-                                  <p className="text-gray-900">{selectedLead.tipoInteresse}</p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Status</label>
-                                  <p className="text-gray-900">{selectedLead.status}</p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Orçamento</label>
-                                  <p className="text-gray-900">
-                                    {selectedLead.orcamento.toLocaleString("pt-BR", {
-                                      style: "currency",
-                                      currency: "BRL",
-                                    })}
-                                  </p>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Data</label>
-                                  <p className="text-gray-900">{selectedLead.data}</p>
-                                </div>
-                              </div>
-                              {selectedLead.observacoes && (
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">Observações</label>
-                                  <p className="text-gray-900">{selectedLead.observacoes}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {actionType === "edit" && (
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
-                                  <input
-                                    type="text"
-                                    name="nome"
-                                    value={leadFormData.nome}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                                  <input
-                                    type="email"
-                                    name="email"
-                                    value={leadFormData.email}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                                  <input
-                                    type="tel"
-                                    name="telefone"
-                                    value={leadFormData.telefone}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Fonte</label>
-                                  <select
-                                    name="fonte"
-                                    value={leadFormData.fonte}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  >
-                                    <option value="">Selecione a fonte</option>
-                                    <option value="Site">Site</option>
-                                    <option value="Google">Google</option>
-                                    <option value="Instagram">Instagram</option>
-                                    <option value="Facebook">Facebook</option>
-                                    <option value="Recomendacao">Recomendação</option>
-                                    <option value="Indicação">Indicação</option>
-                                    <option value="Outros">Outros</option>
-                                  </select>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Tipo de Interesse
-                                  </label>
-                                  <select
-                                    name="tipoInteresse"
-                                    value={leadFormData.tipoInteresse}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  >
-                                    <option value="">Selecione o tipo</option>
-                                    <option value="Curta Temporada">Curta Temporada</option>
-                                    <option value="Longa Temporada">Longa Temporada</option>
-                                    <option value="Morar">Morar</option>
-                                    <option value="Investimento">Investimento</option>
-                                  </select>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Qualificação</label>
-                                  <select
-                                    name="temperatura"
-                                    value={leadFormData.temperatura}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  >
-                                    <option value="">Selecione a qualificação</option>
-                                    <option value="Quente">🔥 Quente</option>
-                                    <option value="Morno">🌡️ Morno</option>
-                                    <option value="Frio">❄️ Frio</option>
-                                  </select>
-                                </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700 mb-1">Orçamento</label>
-                                  <input
-                                    type="text"
-                                    name="orcamento"
-                                    value={leadFormData.orcamento}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  />
-                                </div>
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
-                                <textarea
-                                  name="observacoes"
-                                  value={leadFormData.observacoes}
-                                  onChange={handleInputChange}
-                                  rows={3}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                />
-                              </div>
-                            </div>
-                          )}
-
-                          {actionType === "call" && (
-                            <div className="space-y-4">
-                              <div className="bg-green-50 p-4 rounded-lg">
-                                <h4 className="font-medium text-green-800 mb-2">Informações para Ligação</h4>
-                                <p>
-                                  <strong>Nome:</strong> {selectedLead.nome}
-                                </p>
-                                <p>
-                                  <strong>Telefone:</strong> {selectedLead.telefone}
-                                </p>
-                                <p>
-                                  <strong>Interesse:</strong> {selectedLead.tipoInteresse}
-                                </p>
-                                <p>
-                                  <strong>Orçamento:</strong>{" "}
-                                  {selectedLead.orcamento.toLocaleString("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  })}
-                                </p>
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Notas da Ligação</label>
-                                <textarea
-                                  rows={4}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  placeholder="Anote aqui os pontos importantes da conversa..."
-                                />
-                              </div>
-                            </div>
-                          )}
-
-                          {actionType === "email" && (
-                            <div className="space-y-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Para</label>
-                                <input
-                                  type="email"
-                                  value={selectedLead.email}
-                                  readOnly
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Assunto</label>
-                                <input
-                                  type="text"
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  placeholder="Assunto do email"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
-                                <textarea
-                                  rows={6}
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  placeholder={`Olá ${selectedLead.nome},\n\nEspero que esteja bem. Gostaria de dar continuidade à nossa conversa sobre ${selectedLead.tipoInteresse}...\n\nAguardo seu retorno.\n\nAtenciosamente,\n[Seu Nome]`}
-                                />
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex justify-end gap-3 mt-6">
-                            <button
-                              onClick={() => setShowLeadModal(false)}
-                              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
-                            >
-                              {actionType === "view" ? "Fechar" : "Cancelar"}
-                            </button>
-                            {actionType === "edit" && (
-                              <button
-                                onClick={handleUpdateLead}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                              >
-                                Salvar Alterações
-                              </button>
-                            )}
-                            {actionType === "call" && (
-                              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                                Salvar Notas
-                              </button>
-                            )}
-                            {actionType === "email" && (
-                              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                Enviar Email
-                              </button>
-                            )}
                           </div>
                         </div>
                       </div>
