@@ -2579,7 +2579,10 @@ export function DesignaliCreative() {
                             </h4>
 
                             <div className="space-y-3">
-                              <div className="flex items-start p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                              <div
+                                className="flex items-start p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 transition-colors"
+                                onClick={() => alert("Detalhes do compromisso: Reunião com Maria Silva")}
+                              >
                                 <div className="flex-shrink-0 w-16 text-center">
                                   <div className="text-sm font-medium text-blue-600">09:00</div>
                                 </div>
@@ -2590,7 +2593,10 @@ export function DesignaliCreative() {
                                 </div>
                               </div>
 
-                              <div className="flex items-start p-3 bg-green-50 rounded-lg border-l-4 border-green-500">
+                              <div
+                                className="flex items-start p-3 bg-green-50 rounded-lg border-l-4 border-green-500 cursor-pointer hover:bg-green-100 transition-colors"
+                                onClick={() => alert("Detalhes do compromisso: Visita - João Santos")}
+                              >
                                 <div className="flex-shrink-0 w-16 text-center">
                                   <div className="text-sm font-medium text-green-600">14:00</div>
                                 </div>
@@ -2601,7 +2607,10 @@ export function DesignaliCreative() {
                                 </div>
                               </div>
 
-                              <div className="flex items-start p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                              <div
+                                className="flex items-start p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500 cursor-pointer hover:bg-yellow-100 transition-colors"
+                                onClick={() => alert("Detalhes do compromisso: Follow-up Carlos Lima")}
+                              >
                                 <div className="flex-shrink-0 w-16 text-center">
                                   <div className="text-sm font-medium text-yellow-600">16:30</div>
                                 </div>
@@ -2634,7 +2643,10 @@ export function DesignaliCreative() {
                             </h4>
 
                             <div className="space-y-3">
-                              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                                onClick={() => alert("Detalhes do compromisso: Visita - Ana Costa")}
+                              >
                                 <div className="flex items-center">
                                   <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
                                     <span className="text-xs font-medium text-purple-600">02</span>
@@ -2649,7 +2661,10 @@ export function DesignaliCreative() {
                                 </span>
                               </div>
 
-                              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                                onClick={() => alert("Detalhes do compromisso: Reunião Equipe")}
+                              >
                                 <div className="flex items-center">
                                   <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
                                     <span className="text-xs font-medium text-blue-600">03</span>
@@ -2662,7 +2677,10 @@ export function DesignaliCreative() {
                                 <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">Quarta</span>
                               </div>
 
-                              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+                                onClick={() => alert("Detalhes do compromisso: Apresentação Lucia")}
+                              >
                                 <div className="flex items-center">
                                   <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                                     <span className="text-xs font-medium text-orange-600">05</span>
