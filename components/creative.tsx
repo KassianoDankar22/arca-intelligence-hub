@@ -667,6 +667,33 @@ export function DesignaliCreative() {
     // setTimeout(() => setNotification(""), 3000);
   }
 
+  const [draggedLead, setDraggedLead] = useState(null)
+  const [dragOverColumn, setDragOverColumn] = useState("")
+
+  const handleDragStart = (e, lead) => {
+    setDraggedLead(lead)
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e, columnStatus) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = "move"
+    setDragOverColumn(columnStatus)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverColumn("")
+  }
+
+  const handleDrop = (e, newStatus) => {
+    e.preventDefault()
+    if (draggedLead && draggedLead.status !== newStatus) {
+      updateLeadStatus(draggedLead.id, newStatus)
+    }
+    setDraggedLead(null)
+    setDragOverColumn("")
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       {/* Animated gradient background */}
@@ -1674,57 +1701,126 @@ export function DesignaliCreative() {
                               </CardHeader>
                               <CardContent>
                                 <div className="space-y-4">
-                                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
-                                    <div>
-                                      <h4 className="font-semibold">Leads Qualificados</h4>
-                                      <p className="text-sm text-muted-foreground">156 leads</p>
-                                    </div>
-                                    <div className="text-right">
-                                      <p className="font-semibold">$890K</p>
-                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
-                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "75%" }}></div>
-                                      </div>
-                                    </div>
-                                  </div>
+                                  {(() => {
+                                    const qualifiedLeads = leadsList.filter((l) => l.status === "Qualificado")
+                                    const propostaLeads = leadsList.filter((l) => l.status === "Proposta")
+                                    const negociacaoLeads = leadsList.filter((l) => l.status === "Negociação")
+                                    const fechadoLeads = leadsList.filter((l) => l.status === "Fechado")
 
-                                  <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-xl">
-                                    <div>
-                                      <h4 className="font-semibold">Propostas Enviadas</h4>
-                                      <p className="text-sm text-muted-foreground">89 propostas</p>
-                                    </div>
-                                    <div className="text-right">
-                                      <p className="font-semibold">$650K</p>
-                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
-                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "60%" }}></div>
-                                      </div>
-                                    </div>
-                                  </div>
+                                    const sumQualified = qualifiedLeads.reduce((sum, lead) => sum + lead.orcamento, 0)
+                                    const sumProposta = propostaLeads.reduce((sum, lead) => sum + lead.orcamento, 0)
+                                    const sumNegociacao = negociacaoLeads.reduce((sum, lead) => sum + lead.orcamento, 0)
+                                    const sumFechado = fechadoLeads.reduce((sum, lead) => sum + lead.orcamento, 0)
 
-                                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
-                                    <div>
-                                      <h4 className="font-semibold">Negociação</h4>
-                                      <p className="text-sm text-muted-foreground">34 negociações</p>
-                                    </div>
-                                    <div className="text-right">
-                                      <p className="font-semibold">$420K</p>
-                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
-                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "45%" }}></div>
-                                      </div>
-                                    </div>
-                                  </div>
+                                    const totalPipelineValue = sumQualified + sumProposta + sumNegociacao + sumFechado
 
-                                  <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
-                                    <div>
-                                      <h4 className="font-semibold">Fechamento</h4>
-                                      <p className="text-sm text-muted-foreground">12 fechamentos</p>
-                                    </div>
-                                    <div className="text-right">
-                                      <p className="font-semibold">$280K</p>
-                                      <div className="w-20 h-2 bg-gray-200 rounded-full">
-                                        <div className="h-2 bg-blue-500 rounded-full" style={{ width: "30%" }}></div>
-                                      </div>
-                                    </div>
-                                  </div>
+                                    const getProgressWidth = (value: number) =>
+                                      totalPipelineValue > 0 ? (value / totalPipelineValue) * 100 : 0
+
+                                    return (
+                                      <>
+                                        <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
+                                          <div>
+                                            <h4 className="font-semibold">Leads Qualificados</h4>
+                                            <p className="text-sm text-muted-foreground">
+                                              {qualifiedLeads.length} leads
+                                            </p>
+                                          </div>
+                                          <div className="text-right">
+                                            <p className="font-semibold">
+                                              $
+                                              {sumQualified.toLocaleString("pt-BR", {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              K
+                                            </p>
+                                            <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                              <div
+                                                className="h-2 bg-blue-500 rounded-full"
+                                                style={{ width: `${getProgressWidth(sumQualified)}%` }}
+                                              ></div>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-xl">
+                                          <div>
+                                            <h4 className="font-semibold">Propostas Enviadas</h4>
+                                            <p className="text-sm text-muted-foreground">
+                                              {propostaLeads.length} propostas
+                                            </p>
+                                          </div>
+                                          <div className="text-right">
+                                            <p className="font-semibold">
+                                              $
+                                              {sumProposta.toLocaleString("pt-BR", {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              K
+                                            </p>
+                                            <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                              <div
+                                                className="h-2 bg-yellow-500 rounded-full"
+                                                style={{ width: `${getProgressWidth(sumProposta)}%` }}
+                                              ></div>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
+                                          <div>
+                                            <h4 className="font-semibold">Negociação</h4>
+                                            <p className="text-sm text-muted-foreground">
+                                              {negociacaoLeads.length} negociações
+                                            </p>
+                                          </div>
+                                          <div className="text-right">
+                                            <p className="font-semibold">
+                                              $
+                                              {sumNegociacao.toLocaleString("pt-BR", {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              K
+                                            </p>
+                                            <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                              <div
+                                                className="h-2 bg-green-500 rounded-full"
+                                                style={{ width: `${getProgressWidth(sumNegociacao)}%` }}
+                                              ></div>
+                                            </div>
+                                          </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+                                          <div>
+                                            <h4 className="font-semibold">Fechamento</h4>
+                                            <p className="text-sm text-muted-foreground">
+                                              {fechadoLeads.length} fechamentos
+                                            </p>
+                                          </div>
+                                          <div className="text-right">
+                                            <p className="font-semibold">
+                                              $
+                                              {sumFechado.toLocaleString("pt-BR", {
+                                                minimumFractionDigits: 0,
+                                                maximumFractionDigits: 0,
+                                              })}
+                                              K
+                                            </p>
+                                            <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                              <div
+                                                className="h-2 bg-purple-500 rounded-full"
+                                                style={{ width: `${getProgressWidth(sumFechado)}%` }}
+                                              ></div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )
+                                  })()}
                                 </div>
                               </CardContent>
                             </Card>
@@ -2163,7 +2259,12 @@ export function DesignaliCreative() {
                         {/* Colunas do Pipeline */}
                         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                           {/* Coluna 1: Novos */}
-                          <div className="bg-gray-50 rounded-lg p-4">
+                          <div
+                            className={`bg-gray-50 rounded-lg p-4 ${dragOverColumn === "Novo" ? "bg-gray-100" : ""}`}
+                            onDragOver={(e) => handleDragOver(e, "Novo")}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, "Novo")}
+                          >
                             <div className="flex items-center justify-between mb-4">
                               <h4 className="font-medium text-gray-900">Novos</h4>
                               <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
@@ -2176,7 +2277,10 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm"
+                                    onClick={() => handleViewLead(lead)}
+                                    draggable="true"
+                                    onDragStart={(e) => handleDragStart(e, lead)}
+                                    className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                                   >
                                     <div className="mb-2 flex items-center">
                                       <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
@@ -2203,7 +2307,14 @@ export function DesignaliCreative() {
                           </div>
 
                           {/* Coluna 2: Qualificados */}
-                          <div className="bg-blue-50 rounded-lg p-4">
+                          <div
+                            className={`bg-blue-50 rounded-lg p-4 ${
+                              dragOverColumn === "Qualificado" ? "bg-blue-100" : ""
+                            }`}
+                            onDragOver={(e) => handleDragOver(e, "Qualificado")}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, "Qualificado")}
+                          >
                             <div className="flex items-center justify-between mb-4">
                               <h4 className="font-medium text-blue-900">Qualificados</h4>
                               <span className="bg-blue-200 text-blue-700 text-xs px-2 py-1 rounded-full">
@@ -2216,7 +2327,10 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm"
+                                    onClick={() => handleViewLead(lead)}
+                                    draggable="true"
+                                    onDragStart={(e) => handleDragStart(e, lead)}
+                                    className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                                   >
                                     <div className="mb-2 flex items-center">
                                       <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
@@ -2243,7 +2357,14 @@ export function DesignaliCreative() {
                           </div>
 
                           {/* Coluna 3: Proposta */}
-                          <div className="bg-yellow-50 rounded-lg p-4">
+                          <div
+                            className={`bg-yellow-50 rounded-lg p-4 ${
+                              dragOverColumn === "Proposta" ? "bg-yellow-100" : ""
+                            }`}
+                            onDragOver={(e) => handleDragOver(e, "Proposta")}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, "Proposta")}
+                          >
                             <div className="flex items-center justify-between mb-4">
                               <h4 className="font-medium text-yellow-900">Proposta</h4>
                               <span className="bg-yellow-200 text-yellow-700 text-xs px-2 py-1 rounded-full">
@@ -2256,7 +2377,10 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    className="bg-white p-3 rounded-lg border border-yellow-200 shadow-sm"
+                                    onClick={() => handleViewLead(lead)}
+                                    draggable="true"
+                                    onDragStart={(e) => handleDragStart(e, lead)}
+                                    className="bg-white p-3 rounded-lg border border-yellow-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                                   >
                                     <div className="mb-2 flex items-center">
                                       <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-600">
@@ -2283,7 +2407,14 @@ export function DesignaliCreative() {
                           </div>
 
                           {/* Coluna 4: Negociação */}
-                          <div className="bg-orange-50 rounded-lg p-4">
+                          <div
+                            className={`bg-orange-50 rounded-lg p-4 ${
+                              dragOverColumn === "Negociação" ? "bg-orange-100" : ""
+                            }`}
+                            onDragOver={(e) => handleDragOver(e, "Negociação")}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, "Negociação")}
+                          >
                             <div className="flex items-center justify-between mb-4">
                               <h4 className="font-medium text-orange-900">Negociação</h4>
                               <span className="bg-orange-200 text-orange-700 text-xs px-2 py-1 rounded-full">
@@ -2296,7 +2427,10 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    className="bg-white p-3 rounded-lg border border-orange-200 shadow-sm"
+                                    onClick={() => handleViewLead(lead)}
+                                    draggable="true"
+                                    onDragStart={(e) => handleDragStart(e, lead)}
+                                    className="bg-white p-3 rounded-lg border border-orange-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                                   >
                                     <div className="mb-2 flex items-center">
                                       <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-medium text-purple-600">
@@ -2323,7 +2457,14 @@ export function DesignaliCreative() {
                           </div>
 
                           {/* Coluna 5: Fechado */}
-                          <div className="bg-green-50 rounded-lg p-4">
+                          <div
+                            className={`bg-green-50 rounded-lg p-4 ${
+                              dragOverColumn === "Fechado" ? "bg-green-100" : ""
+                            }`}
+                            onDragOver={(e) => handleDragOver(e, "Fechado")}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, "Fechado")}
+                          >
                             <div className="flex items-center justify-between mb-4">
                               <h4 className="font-medium text-green-900">Fechado</h4>
                               <span className="bg-green-200 text-green-700 text-xs px-2 py-1 rounded-full">
@@ -2336,7 +2477,10 @@ export function DesignaliCreative() {
                                 .map((lead) => (
                                   <div
                                     key={lead.id}
-                                    className="bg-white p-3 rounded-lg border border-green-200 shadow-sm"
+                                    onClick={() => handleViewLead(lead)}
+                                    draggable="true"
+                                    onDragStart={(e) => handleDragStart(e, lead)}
+                                    className="bg-white p-3 rounded-lg border border-green-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
                                   >
                                     <div className="mb-2 flex items-center">
                                       <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-medium text-purple-600">
