@@ -3771,4 +3771,20 @@ Seu Corretor`}
             <div className="mt-6 flex gap-3">
               <Button
                 variant="outline"
-                className="flex-1 rounded-xl bg-transparent"\
+                className="flex-1 rounded-xl bg-transparent"
+                onClick={() => setShowNewAppointmentModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button className="flex-1 rounded-xl" onClick={handleSaveAppointment}>
+                Salvar Compromisso
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default DesignaliCreative
