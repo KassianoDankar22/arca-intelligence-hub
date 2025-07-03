@@ -46,7 +46,7 @@ import { PipelineView } from "@/components/crm/PipelineView"
 import { AgendaManager } from "@/components/crm/AgendaManager"
 import { Sidebar } from "@/components/layout/Sidebar"
 import { AgentsHub } from "@/components/agents/AgentsHub"
-import { FinancialDashboard } from "@/components/financial/FinancialDashboard" // Import the new FinancialDashboard component
+import { FinancialDashboard } from "@/components/financial/FinancialDashboard"
 
 // Definir interface para Compromisso
 interface Appointment {
@@ -1085,11 +1085,12 @@ export function DesignaliCreative() {
                       </button>
                       <button
                         onClick={() => setActiveCrmTab("pipeline")}
-                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                          activeCrmTab === "pipeline"
-                            ? "bg-white text-blue-600 shadow-sm"
-                            : "text-gray-600 hover:text-blue-600"
-                        }`}
+                        className={`px-4 py-2 rounded-md text-sm=>setActiveCrmTab("pipeline")}
+                      className={\`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                        activeCrmTab === "pipeline"
+                          ? "bg-white text-blue-600 shadow-sm"
+                          : "text-gray-600 hover:text-blue-600"
+                      }`}
                       >
                         Pipeline
                       </button>
