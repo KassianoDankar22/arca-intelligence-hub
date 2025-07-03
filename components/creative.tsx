@@ -382,7 +382,7 @@ const sidebarItems = [
   },
   {
     title: "Arca AI Chat",
-    icon: <MessageCircle />,
+    icon: <MessageSquare />,
     tabValue: "files", // Corresponds to the "files" tab
   },
   {
