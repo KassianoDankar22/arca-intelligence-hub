@@ -71,25 +71,6 @@ interface Appointment {
   notes: string
 }
 
-// Definir esquema de validação com Zod
-// This schema is not currently used in the component, but kept for future use if react-hook-form is re-integrated.
-// const appointmentSchema = z.object({
-//   title: z.string().min(1, "O título é obrigatório.").max(100, "O título não pode ter mais de 100 caracteres."),
-//   date: z
-//     .string()
-//     .min(1, "A data é obrigatória.")
-//     .refine((date) => {
-//       const today = new Date().toISOString().split("T")[0]
-//       return date >= today
-//     }, "A data não pode ser no passado."),
-//   time: z.string().min(1, "O horário é obrigatório."),
-//   type: z.string().optional(),
-//   relatedLead: z.string().optional(),
-//   reminder: z.string().optional(),
-//   location: z.string().optional(),
-//   notes: z.string().max(500, "As observações não podem ter mais de 500 caracteres.").optional(),
-// })
-
 // Sample data for apps
 const apps = [
   {
@@ -204,6 +185,15 @@ const apps = [
     name: "TOM Gerador de ROI",
     icon: <Gauge className="text-cyan-500" />,
     description: "Análise para imóveis de curta temporada em Orlando",
+    category: "Análise",
+    recent: false,
+    new: true,
+    progress: 100,
+  },
+  {
+    name: "Zayo Analisador de Zillow",
+    icon: <BarChart3 className="text-emerald-500" />,
+    description: "Análise avançada de dados do Zillow para Orlando",
     category: "Análise",
     recent: false,
     new: true,
@@ -408,19 +398,19 @@ const sidebarItems = [
     tabValue: "home",
   },
   {
-    title: "Agents Arca", // Este item será renderizado de forma customizada
+    title: "Agents Arca",
     icon: <UserIcon />,
-    badge: "13", // Mudança aqui: de apps.length para "13"
+    badge: "14", // Updated from "13" to "14" to reflect the new agent
   },
   {
     title: "Arca AI Chat",
     icon: <MessageCircle />,
-    tabValue: "files", // Corresponds to the "files" tab
+    tabValue: "files",
   },
   {
     title: "CRM",
     icon: <ChartColumnIncreasingIcon />,
-    tabValue: "learn", // Corresponds to the "learn" tab
+    tabValue: "learn",
   },
   {
     title: "Financeiro",
@@ -440,40 +430,38 @@ export function DesignaliCreative() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
   const [sourceFilter, setSourceFilter] = useState("")
-  const [notification, setNotification] = useState("") // Novo estado para notificações
+  const [notification, setNotification] = useState("")
 
   const [progress, setProgress] = useState(0)
   const [notifications, setNotifications] = useState(5)
   const [activeTab, setActiveTab] = useState("home")
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [isAgentsOpen, setIsAgentsOpen] = useState(true) // Começa aberto
+  const [isAgentsOpen, setIsAgentsOpen] = useState(true)
   const [savedROIs, setSavedROIs] = useState<any[]>([])
   const [favoriteAgents, setFavoriteAgents] = useState<string[]>([])
   const [activeRoiView, setActiveRoiView] = useState<"agents" | "my-rois" | "favorites">("agents")
   const [showRoiTool, setShowRoiTool] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("Todas as Categorias")
   const [showNewLeadModal, setShowNewLeadModal] = useState(false)
-  const [activeCrmTab, setActiveCrmTab] = useState("dashboard") // Adicionar esta linha
+  const [activeCrmTab, setActiveCrmTab] = useState("dashboard")
   const [showLeadModal, setShowLeadModal] = useState(false)
-  const [selectedLead, setSelectedLead] = useState<any>(null) // Usar 'any' ou definir uma interface para Lead
-  const [actionType, setActionType] = useState("") // 'view', 'call', 'email', 'edit'
-  const [showReportModal, setShowReportModal] = useState(false) // Novo estado para o modal de relatório
-  // Add state for the temperature filter
+  const [selectedLead, setSelectedLead] = useState<any>(null)
+  const [actionType, setActionType] = useState("")
+  const [showReportModal, setShowReportModal] = useState(false)
   const [temperaturaFilter, setTemperaturaFilter] = useState("")
   const [newAppointmentTitle, setNewAppointmentTitle] = useState("")
   const [newAppointmentDate, setNewAppointmentDate] = useState("")
   const [newAppointmentTime, setNewAppointmentTime] = useState("")
-  const [newAppointmentType, setNewAppointmentType] = useState("") // NOVO ESTADO
-  const [newAppointmentRelatedLead, setNewAppointmentRelatedLead] = useState("") // NOVO ESTADO
-  const [newAppointmentReminder, setNewAppointmentReminder] = useState("") // NOVO ESTADO
-  const [newAppointmentLocation, setNewAppointmentLocation] = useState("") // NOVO ESTADO
-  const [newAppointmentNotes, setNewAppointmentNotes] = useState("") // NOVO ESTADO
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false) // Renomeado de showNewAppointmentModal
-  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null) // Novo estado para edição
+  const [newAppointmentType, setNewAppointmentType] = useState("")
+  const [newAppointmentRelatedLead, setNewAppointmentRelatedLead] = useState("")
+  const [newAppointmentReminder, setNewAppointmentReminder] = useState("")
+  const [newAppointmentLocation, setNewAppointmentLocation] = useState("")
+  const [newAppointmentNotes, setNewAppointmentNotes] = useState("")
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false)
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null)
   const [completedTasks, setCompletedTasks] = useState<number[]>([])
   const [newAppointments, setNewAppointments] = useState<Appointment[]>([
-    // Compromissos de exemplo para "Hoje"
     {
       id: 1,
       title: "Reunião com Maria Silva",
@@ -507,11 +495,10 @@ export function DesignaliCreative() {
       location: "Ligação agendada",
       notes: "Retorno sobre proposta",
     },
-    // Compromissos de exemplo para "Próximos Dias"
     {
       id: 4,
       title: "Visita - Ana Costa",
-      date: "2024-07-02", // Amanhã
+      date: "2024-07-02",
       time: "10:00",
       type: "visita",
       relatedLead: "Ana Costa",
@@ -522,7 +509,7 @@ export function DesignaliCreative() {
     {
       id: 5,
       title: "Reunião Equipe",
-      date: "2024-07-03", // Depois de amanhã
+      date: "2024-07-03",
       time: "09:00",
       type: "reuniao",
       relatedLead: "sem-lead",
@@ -533,7 +520,7 @@ export function DesignaliCreative() {
     {
       id: 6,
       title: "Apresentação Lucia",
-      date: "2024-07-05", // Daqui a alguns dias
+      date: "2024-07-05",
       time: "15:00",
       type: "apresentacao",
       relatedLead: "Lucia Mendes",
@@ -614,10 +601,13 @@ export function DesignaliCreative() {
     telefone: "",
     fonte: "",
     tipoInteresse: "",
-    temperatura: "", // NOVO CAMPO
+    temperatura: "",
     orcamento: "",
     observacoes: "",
   })
+
+  const [draggedLead, setDraggedLead] = useState(null)
+  const [dragOverColumn, setDragOverColumn] = useState("")
 
   // Função para gerar dados do relatório
   const generateReportData = () => {
@@ -652,7 +642,7 @@ export function DesignaliCreative() {
       totalLeads,
       leadsPorStatus,
       leadsPorFonte,
-      leadsPorTemperatura, // ADICIONE ESTA LINHA
+      leadsPorTemperatura,
       valorTotal,
       valorMedio,
       taxaConversao,
@@ -666,7 +656,6 @@ export function DesignaliCreative() {
     const leadName = leadsList.find((l) => l.id === leadId)?.nome
     setNotification(`Status de ${leadName} alterado para ${newStatus}`)
 
-    // Limpar notificação após 3 segundos
     setTimeout(() => setNotification(""), 3000)
   }
 
@@ -687,14 +676,14 @@ export function DesignaliCreative() {
     return () => clearTimeout(timer)
   }, [])
 
-  // useEffect para simular expiração de ROIs, agora no componente pai
+  // useEffect para simular expiração de ROIs
   useEffect(() => {
     const interval = setInterval(
       () => {
         setSavedROIs((prev) => prev.filter((roi) => new Date(roi.expiresAt) > new Date()))
       },
       60 * 60 * 1000,
-    ) // 1 hora
+    )
 
     return () => clearInterval(interval)
   }, [])
@@ -714,7 +703,7 @@ export function DesignaliCreative() {
         telefone: leadFormData.telefone,
         fonte: leadFormData.fonte,
         tipoInteresse: leadFormData.tipoInteresse,
-        temperatura: leadFormData.temperatura, // Novo campo
+        temperatura: leadFormData.temperatura,
         orcamento: Number.parseFloat(leadFormData.orcamento.replace(/[^0-9.]/g, "")) || 0,
         status: "Novo",
         data: new Date().toLocaleDateString("pt-BR"),
@@ -724,14 +713,13 @@ export function DesignaliCreative() {
       setLeadsList((prev) => [novoLead, ...prev])
       setShowNewLeadModal(false)
 
-      // Limpar formulário
       setLeadFormData({
         nome: "",
         email: "",
         telefone: "",
         fonte: "",
         tipoInteresse: "",
-        temperatura: "", // Novo campo
+        temperatura: "",
         orcamento: "",
         observacoes: "",
       })
@@ -765,7 +753,7 @@ export function DesignaliCreative() {
       fonte: lead.fonte,
       tipoInteresse: lead.tipoInteresse,
       temperatura: lead.temperatura,
-      orcamento: lead.orcamento.toString(), // Convert number to string for input
+      orcamento: lead.orcamento.toString(),
       observacoes: lead.observacoes || "",
     })
     setActionType("edit")
@@ -780,18 +768,9 @@ export function DesignaliCreative() {
     }))
   }
 
-  // Placeholder for handleUpdateLead - will be implemented in the next step
   const handleUpdateLead = () => {
     console.log("Update Lead function will be implemented next!")
-    // Logic to update the lead in leadsList
-    // setLeadsList((prev) => prev.map((lead) => (lead.id === selectedLead.id ? { ...lead, ...leadFormData } : lead)));
-    // setShowLeadModal(false);
-    // setNotification(`Lead ${selectedLead.nome} atualizado com sucesso!`);
-    // setTimeout(() => setNotification(""), 3000);
   }
-
-  const [draggedLead, setDraggedLead] = useState(null)
-  const [dragOverColumn, setDragOverColumn] = useState("")
 
   const handleDragStart = (e, lead) => {
     setDraggedLead(lead)
@@ -802,10 +781,6 @@ export function DesignaliCreative() {
     e.preventDefault()
     e.dataTransfer.dropEffect = "move"
     setDragOverColumn(columnStatus)
-  }
-
-  const handleDragLeave = () => {
-    setDragOverColumn("")
   }
 
   const handleDrop = (e, newStatus) => {
@@ -827,7 +802,6 @@ export function DesignaliCreative() {
     })
   }
 
-  // Função para abrir o modal de compromisso (novo ou edição)
   const openAppointmentModal = (appointmentToEdit: Appointment | null = null) => {
     if (appointmentToEdit) {
       setEditingAppointment(appointmentToEdit)
@@ -853,9 +827,7 @@ export function DesignaliCreative() {
     setShowAppointmentModal(true)
   }
 
-  // Função para salvar ou atualizar compromisso
   const handleSaveOrUpdateAppointment = () => {
-    // Validação
     if (!newAppointmentTitle || !newAppointmentDate || !newAppointmentTime) {
       alert("Por favor, preencha o título, data e horário do compromisso.")
       return
@@ -873,21 +845,18 @@ export function DesignaliCreative() {
     }
 
     if (editingAppointment) {
-      // Lógica de atualização
       setNewAppointments((prev) =>
         prev.map((app) => (app.id === editingAppointment.id ? { ...app, ...appointmentData } : app)),
       )
       setNotification("Compromisso atualizado com sucesso!")
     } else {
-      // Lógica de criação
       const newId = newAppointments.length > 0 ? Math.max(...newAppointments.map((a) => a.id)) + 1 : 1
       setNewAppointments((prev) => [...prev, { id: newId, ...appointmentData }])
       setNotification("Compromisso salvo com sucesso!")
     }
 
     setShowAppointmentModal(false)
-    setEditingAppointment(null) // Limpar compromisso em edição
-    // Limpar campos do formulário
+    setEditingAppointment(null)
     setNewAppointmentTitle("")
     setNewAppointmentDate("")
     setNewAppointmentTime("")
@@ -900,21 +869,23 @@ export function DesignaliCreative() {
     setTimeout(() => setNotification(""), 3000)
   }
 
-  // Filtrar compromissos para "Hoje"
-  const today = new Date().toISOString().split("T")[0] // YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0]
   const appointmentsToday = newAppointments
     .filter((appointment) => appointment.date === today)
     .sort((a, b) => a.time.localeCompare(b.time))
 
-  // Filtrar compromissos para "Próximos Dias" (a partir de amanhã)
   const upcomingAppointments = newAppointments
     .filter((appointment) => appointment.date > today)
     .sort((a, b) => {
-      // Ordenar por data e depois por hora
       const dateA = new Date(`${a.date}T${a.time}`)
       const dateB = new Date(`${b.date}T${b.time}`)
       return dateA.getTime() - dateB.getTime()
     })
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setDragOverColumn("")
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
@@ -971,7 +942,6 @@ export function DesignaliCreative() {
                 if (item.title === "Agents Arca") {
                   return (
                     <div key={item.title} className="mb-1">
-                      {/* Botão principal Agents Arca */}
                       <button
                         onClick={() => setIsAgentsOpen(!isAgentsOpen)}
                         className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors"
@@ -981,17 +951,15 @@ export function DesignaliCreative() {
                           <span className="text-sm text-gray-700">Agents Arca</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">13</span>
+                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">14</span>
                           <ChevronDown
                             className={`h-4 w-4 text-gray-600 transition-transform ${isAgentsOpen ? "rotate-180" : ""}`}
                           />
                         </div>
                       </button>
 
-                      {/* Dropdown content */}
                       {isAgentsOpen && (
                         <div className="ml-4 mt-1 space-y-1">
-                          {/* Todos os Agents */}
                           <button
                             onClick={() => {
                               setActiveTab("apps")
@@ -1008,7 +976,6 @@ export function DesignaliCreative() {
                             <span>Todos os Agents</span>
                           </button>
 
-                          {/* Meus ROIs */}
                           <button
                             onClick={() => handleNavigate("my-rois")}
                             className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
@@ -1028,7 +995,6 @@ export function DesignaliCreative() {
                             )}
                           </button>
 
-                          {/* Favoritos */}
                           <button
                             onClick={() => handleNavigate("favorites")}
                             className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
@@ -1063,8 +1029,7 @@ export function DesignaliCreative() {
                           if (item.tabValue) {
                             setActiveTab(item.tabValue)
                             if (item.tabValue === "learn") {
-                              // If CRM tab
-                              setActiveCrmTab("dashboard") // Set CRM sub-tab to dashboard
+                              setActiveCrmTab("dashboard")
                             }
                           }
                         }}
@@ -1145,7 +1110,6 @@ export function DesignaliCreative() {
                 if (item.title === "Agents Arca") {
                   return (
                     <div key={item.title} className="mb-1">
-                      {/* Botão principal Agents Arca */}
                       <button
                         onClick={() => setIsAgentsOpen(!isAgentsOpen)}
                         className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors"
@@ -1155,17 +1119,15 @@ export function DesignaliCreative() {
                           <span className="text-sm text-gray-700">Agents Arca</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">13</span>
+                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">14</span>
                           <ChevronDown
                             className={`h-4 w-4 text-gray-600 transition-transform ${isAgentsOpen ? "rotate-180" : ""}`}
                           />
                         </div>
                       </button>
 
-                      {/* Dropdown content */}
                       {isAgentsOpen && (
                         <div className="ml-4 mt-1 space-y-1">
-                          {/* Todos os Agents */}
                           <button
                             onClick={() => {
                               setActiveTab("apps")
@@ -1182,7 +1144,6 @@ export function DesignaliCreative() {
                             <span>Todos os Agents</span>
                           </button>
 
-                          {/* Meus ROIs */}
                           <button
                             onClick={() => handleNavigate("my-rois")}
                             className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
@@ -1202,7 +1163,6 @@ export function DesignaliCreative() {
                             )}
                           </button>
 
-                          {/* Favoritos */}
                           <button
                             onClick={() => handleNavigate("favorites")}
                             className={`w-full text-left p-3 rounded-lg transition-all flex items-center justify-between text-sm ${
@@ -1237,8 +1197,7 @@ export function DesignaliCreative() {
                           if (item.tabValue) {
                             setActiveTab(item.tabValue)
                             if (item.tabValue === "learn") {
-                              // If CRM tab
-                              setActiveCrmTab("dashboard") // Set CRM sub-tab to dashboard
+                              setActiveCrmTab("dashboard")
                             }
                           }
                         }}
@@ -1298,7 +1257,6 @@ export function DesignaliCreative() {
             <PanelLeft className="h-5 w-5" />
           </Button>
           <div className="flex flex-1 items-center justify-between">
-            {/* Updated title and subtitle */}
             <div className="flex items-center gap-3">
               <ThemeToggle />
 
@@ -1333,11 +1291,9 @@ export function DesignaliCreative() {
             value={activeTab}
             onValueChange={(value) => {
               setActiveTab(value)
-              // Reset showRoiTool to false when navigating to any tab other than the ROI tool itself
               if (value !== "apps") {
-                // Changed from "roi-tool" to "apps" as ROI tool is now part of apps tab
                 setShowRoiTool(false)
-                setActiveRoiView("agents") // Reset ROI view when leaving apps tab
+                setActiveRoiView("agents")
               }
             }}
             className="w-full"
@@ -1358,7 +1314,7 @@ export function DesignaliCreative() {
                 </TabsTrigger>
               </TabsList>
               <div className="hidden md:flex gap-2">
-                {activeTab === "files" && ( // Add this conditional rendering
+                {activeTab === "files" && (
                   <StarBorder as="button" onClick={() => setActiveTab("files")} className="" color="#3B82F6">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     Histórico do Chat
@@ -1378,36 +1334,20 @@ export function DesignaliCreative() {
                 <TabsContent value="home" className="space-y-8 mt-0">
                   <section>
                     <motion.div
+                      className="relative overflow-hidden rounded-3xl px-8 py-2 bg-slate-500 opacity-40 text-slate-100"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="relative overflow-hidden rounded-3xl px-8 py-2 bg-slate-500 opacity-40 text-slate-100"
                     >
-                      <div className="relative z-10">
-                        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                          <div className="space-y-4">
-                            <h2 className="text-3xl font-bold">Bom dia, Corretor!</h2>
-                            <p className="max-w-[600px] text-slate-100">
-                              Domine o mercado imobiliário de Orlando com nossa suíte de soluções inteligentes para
-                              corretores.
-                            </p>
-                            <div className="flex flex-wrap gap-3"></div>
-                          </div>
-                          <div className="hidden lg:block">
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 50, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                              className="relative h-40 w-40"
-                            >
-                              <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-md" />
-                              <div className="absolute inset-4 rounded-full bg-white/20" />
-                              <div className="absolute inset-8 rounded-full bg-white/30" />
-                              <div className="absolute inset-12 rounded-full bg-white/40" />
-                              <div className="absolute inset-16 rounded-full bg-white/50" />
-                            </motion.div>
-                          </div>
-                        </div>
+                      <div className="relative z-10 max-w-2xl">
+                        <h2 className="text-2xl md:text-4xl font-bold">Bom dia, Corretor!</h2>
+                        <p className="mt-2 text-sm md:text-base text-white/80">
+                          Domine o mercado imobiliário de Orlando com nossa suíte de soluções inteligentes para
+                          corretores.
+                        </p>
+                        <div className="flex flex-wrap gap-3"></div>
                       </div>
+
                       <BackgroundBeams className="absolute inset-0 z-0 pointer-events-none" />
                     </motion.div>
                   </section>
@@ -1602,7 +1542,6 @@ export function DesignaliCreative() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                       >
-                        {/* Conteúdo acima da animação */}
                         <div className="relative z-10 max-w-2xl">
                           <h2 className="text-2xl md:text-4xl font-bold">Agents Arca AI para Corretores</h2>
                           <p className="mt-2 text-sm md:text-base text-white/80">
@@ -1610,7 +1549,6 @@ export function DesignaliCreative() {
                           </p>
                         </div>
 
-                        {/* Fundo animado apenas dentro do banner */}
                         <BackgroundBeams className="absolute inset-0 z-0 pointer-events-none" />
                       </motion.div>
 
@@ -1765,15 +1703,11 @@ export function DesignaliCreative() {
                 </TabsContent>
 
                 <TabsContent value="files" className="space-y-8 mt-0 h-full w-full max-w-full">
-                  {/* Removed AIAssistantInterface and replaced with a placeholder */}
-                  <div className="h-full bg-white flex items-center justify-center">
-                    <p className="text-gray-500 text-lg">Arca AI Assistant Loading...</p>
-                  </div>
+                  
                 </TabsContent>
 
                 <TabsContent value="learn" className="space-y-8 mt-0">
                   <div className="space-y-6">
-                    {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                       <div>
                         <h1 className="text-3xl font-bold text-gray-800">CRM Dashboard</h1>
@@ -1804,7 +1738,6 @@ export function DesignaliCreative() {
                       </div>
                     </div>
 
-                    {/* Notificação de sucesso */}
                     {notification && (
                       <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center justify-between">
                         <span>{notification}</span>
@@ -1814,7 +1747,6 @@ export function DesignaliCreative() {
                       </div>
                     )}
 
-                    {/* Navegação por abas do CRM */}
                     <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
                       <button
                         onClick={() => setActiveCrmTab("dashboard")}
@@ -1860,7 +1792,6 @@ export function DesignaliCreative() {
 
                     {activeCrmTab === "dashboard" && (
                       <div>
-                        {/* Metrics Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                           <Card className="rounded-2xl">
                             <CardContent className="p-6">
@@ -1940,9 +1871,7 @@ export function DesignaliCreative() {
                           </Card>
                         </div>
 
-                        {/* Main Content Grid */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                          {/* Pipeline */}
                           <div className="lg:col-span-2">
                             <Card className="rounded-2xl">
                               <CardHeader>
@@ -2078,7 +2007,6 @@ export function DesignaliCreative() {
                             </Card>
                           </div>
 
-                          {/* Recent Activities */}
                           <div>
                             <Card className="rounded-2xl">
                               <CardHeader>
@@ -2134,7 +2062,6 @@ export function DesignaliCreative() {
                           </div>
                         </div>
 
-                        {/* Leads Table */}
                         <Card className="rounded-2xl">
                           <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -2143,7 +2070,6 @@ export function DesignaliCreative() {
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
-                            {/* Search and Filter */}
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                               <div className="relative w-full sm:w-auto">
                                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -2185,7 +2111,6 @@ export function DesignaliCreative() {
                               </div>
                             </div>
 
-                            {/* Leads Table */}
                             <div className="overflow-x-auto">
                               <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
@@ -2214,7 +2139,7 @@ export function DesignaliCreative() {
                                   </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                  {leadsList.map((lead) => (
+                                  {filteredLeads.map((lead) => (
                                     <tr key={lead.id}>
                                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {lead.nome}
@@ -2272,7 +2197,6 @@ export function DesignaliCreative() {
 
                     {activeCrmTab === "leads" && (
                       <div>
-                        {/* Search and Filter */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                           <div className="relative w-full sm:w-auto">
                             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -2312,7 +2236,6 @@ export function DesignaliCreative() {
                               <option value="Recomendação">Recomendação</option>
                             </select>
 
-                            {/* Add the new temperature filter here */}
                             <select
                               value={temperaturaFilter}
                               onChange={(e) => setTemperaturaFilter(e.target.value)}
@@ -2326,7 +2249,6 @@ export function DesignaliCreative() {
                           </div>
                         </div>
 
-                        {/* Contador de resultados filtrados */}
                         <div className="mb-4 flex items-center justify-between">
                           <p className="text-sm text-gray-600">
                             Mostrando {filteredLeads.length} de {leadsList.length} leads
@@ -2337,7 +2259,7 @@ export function DesignaliCreative() {
                                 setSearchTerm("")
                                 setStatusFilter("")
                                 setSourceFilter("")
-                                setTemperaturaFilter("") // Reset the new filter
+                                setTemperaturaFilter("")
                               }}
                               className="text-sm text-blue-600 hover:text-blue-800"
                             >
@@ -2346,10 +2268,7 @@ export function DesignaliCreative() {
                           )}
                         </div>
 
-                        {/* Leads Table */}
                         <div>
-                          {" "}
-                          {/* REMOVED overflow-x-auto HERE */}
                           <table className="w-full min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                               <tr>
@@ -2489,7 +2408,6 @@ export function DesignaliCreative() {
 
                     {activeCrmTab === "pipeline" && (
                       <div className="space-y-6">
-                        {/* Header do Pipeline */}
                         <div className="flex justify-between items-center">
                           <h3 className="text-lg font-semibold">Pipeline de Vendas Visual</h3>
                           <div className="text-sm text-gray-500">
@@ -2508,9 +2426,7 @@ export function DesignaliCreative() {
                           </div>
                         </div>
 
-                        {/* Colunas do Pipeline */}
                         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                          {/* Coluna 1: Novos */}
                           <div
                             className={`bg-gray-50 rounded-lg p-4 ${dragOverColumn === "Novo" ? "bg-gray-100" : ""}`}
                             onDragOver={(e) => handleDragOver(e, "Novo")}
@@ -2558,7 +2474,6 @@ export function DesignaliCreative() {
                             </div>
                           </div>
 
-                          {/* Coluna 2: Qualificados */}
                           <div
                             className={`bg-blue-50 rounded-lg p-4 ${
                               dragOverColumn === "Qualificado" ? "bg-blue-100" : ""
@@ -2608,7 +2523,6 @@ export function DesignaliCreative() {
                             </div>
                           </div>
 
-                          {/* Coluna 3: Proposta */}
                           <div
                             className={`bg-yellow-50 rounded-lg p-4 ${
                               dragOverColumn === "Proposta" ? "bg-yellow-100" : ""
@@ -2658,7 +2572,6 @@ export function DesignaliCreative() {
                             </div>
                           </div>
 
-                          {/* Coluna 4: Negociação */}
                           <div
                             className={`bg-orange-50 rounded-lg p-4 ${
                               dragOverColumn === "Negociação" ? "bg-orange-100" : ""
@@ -2708,7 +2621,6 @@ export function DesignaliCreative() {
                             </div>
                           </div>
 
-                          {/* Coluna 5: Fechado */}
                           <div
                             className={`bg-green-50 rounded-lg p-4 ${
                               dragOverColumn === "Fechado" ? "bg-green-100" : ""
@@ -2759,7 +2671,6 @@ export function DesignaliCreative() {
                           </div>
                         </div>
 
-                        {/* Estatísticas do Pipeline */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
                           <div className="bg-white p-4 rounded-lg border border-gray-200">
                             <div className="text-sm text-gray-500">Taxa de Conversão</div>
@@ -2783,18 +2694,16 @@ export function DesignaliCreative() {
 
                     {activeCrmTab === "agenda" && (
                       <div className="space-y-6">
-                        {/* Header da Agenda */}
                         <div className="flex justify-between items-center">
                           <h3 className="text-lg font-semibold">Agenda e Compromissos</h3>
                           <button
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
-                            onClick={() => openAppointmentModal()} // Abre o modal para novo compromisso
+                            onClick={() => openAppointmentModal()}
                           >
                             + Novo Compromisso
                           </button>
                         </div>
 
-                        {/* Notificação de sucesso */}
                         {notification && (
                           <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center justify-between">
                             <span>{notification}</span>
@@ -2804,319 +2713,855 @@ export function DesignaliCreative() {
                           </div>
                         )}
 
-                        {/* Grid: Agenda do Dia + Próximos Compromissos */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                          {/* Agenda de Hoje */}
-                          <div className="bg-white rounded-lg border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                              <svg
-                                className="w-5 h-5 mr-2 text-blue-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                              Hoje - {new Date().toLocaleDateString("pt-BR")}
-                            </h4>
-
-                            <div className="space-y-3">
-                              {appointmentsToday.length > 0 ? (
-                                appointmentsToday.map((appointment) => {
-                                  let bgColor = "bg-gray-50"
-                                  let borderColor = "border-gray-500"
-                                  let textColor = "text-gray-600"
-                                  let typeDescription = ""
-
-                                  switch (appointment.type) {
-                                    case "reuniao":
-                                      bgColor = "bg-blue-50"
-                                      borderColor = "border-blue-500"
-                                      textColor = "text-blue-600"
-                                      typeDescription = "Reunião"
-                                      break
-                                    case "visita":
-                                      bgColor = "bg-green-50"
-                                      borderColor = "border-green-500"
-                                      textColor = "text-green-600"
-                                      typeDescription = "Visita"
-                                      break
-                                    case "ligacao":
-                                      bgColor = "bg-yellow-50"
-                                      borderColor = "border-yellow-500"
-                                      textColor = "text-yellow-600"
-                                      typeDescription = "Ligação"
-                                      break
-                                    case "followup":
-                                      bgColor = "bg-orange-50"
-                                      borderColor = "border-orange-500"
-                                      textColor = "text-orange-600"
-                                      typeDescription = "Follow-up"
-                                      break
-                                    case "apresentacao":
-                                      bgColor = "bg-purple-50"
-                                      borderColor = "border-purple-500"
-                                      textColor = "text-purple-600"
-                                      typeDescription = "Apresentação"
-                                      break
-                                    case "negociacao":
-                                      bgColor = "bg-red-50"
-                                      borderColor = "border-red-500"
-                                      textColor = "text-red-600"
-                                      typeDescription = "Negociação"
-                                      break
-                                    default:
-                                      typeDescription = "Compromisso"
-                                      break
-                                  }
-
-                                  return (
-                                    <div
-                                      key={appointment.id}
-                                      className={`flex items-start p-3 ${bgColor} rounded-lg border-l-4 ${borderColor} cursor-pointer hover:${bgColor.replace("-50", "-100")} transition-colors`}
-                                    >
-                                      <div className="flex-shrink-0 w-16 text-center">
-                                        <div className={`text-sm font-medium ${textColor}`}>{appointment.time}</div>
-                                      </div>
-                                      <div className="ml-3 flex-1">
-                                        <div className="text-sm font-medium text-gray-900">{appointment.title}</div>
-                                        <div className="text-xs text-gray-500">
-                                          {appointment.relatedLead && appointment.relatedLead !== "sem-lead"
-                                            ? `Com ${appointment.relatedLead} (${typeDescription})`
-                                            : typeDescription}
-                                        </div>
-                                        <div className={`text-xs ${textColor} mt-1`}>
-                                          📍 {appointment.location || "Local não informado"}
-                                        </div>
-                                      </div>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="ml-2 h-8 w-8"
-                                        onClick={() => openAppointmentModal(appointment)}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                          <div className="lg:col-span-2">
+                            <Card className="rounded-2xl">
+                              <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Bell className="h-5 w-5" />
+                                  Compromissos de Hoje
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                {appointmentsToday.length === 0 ? (
+                                  <div className="text-center py-8 text-gray-500">
+                                    <Bell className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                    <p>Nenhum compromisso para hoje</p>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-4">
+                                    {appointmentsToday.map((appointment) => (
+                                      <div
+                                        key={appointment.id}
+                                        className="flex items-center justify-between p-4 bg-blue-50 rounded-xl"
                                       >
-                                        <Edit className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  )
-                                })
-                              ) : (
-                                <p className="text-sm text-gray-500">Nenhum compromisso para hoje.</p>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Próximos Compromissos */}
-                          <div className="bg-white rounded-lg border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                              <svg
-                                className="w-5 h-5 mr-2 text-green-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              Próximos Dias
-                            </h4>
-
-                            <div className="space-y-3">
-                              {upcomingAppointments.length > 0 ? (
-                                upcomingAppointments.map((appointment) => {
-                                  const appointmentDate = new Date(appointment.date)
-                                  const todayDate = new Date()
-                                  const tomorrowDate = new Date()
-                                  tomorrowDate.setDate(todayDate.getDate() + 1)
-
-                                  let dateLabel = appointmentDate.toLocaleDateString("pt-BR")
-                                  if (appointmentDate.toDateString() === tomorrowDate.toDateString()) {
-                                    dateLabel = "Amanhã"
-                                  } else if (
-                                    appointmentDate.getDay() === todayDate.getDay() + 2 ||
-                                    appointmentDate.getDay() === todayDate.getDay() - 5
-                                  ) {
-                                    // Check for day after tomorrow
-                                    const days = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
-                                    dateLabel = days[appointmentDate.getDay()]
-                                  }
-
-                                  let bgColor = "bg-gray-50"
-                                  let textColor = "text-gray-600"
-                                  let badgeColor = "bg-gray-100 text-gray-800"
-
-                                  switch (appointment.type) {
-                                    case "reuniao":
-                                      bgColor = "bg-blue-50"
-                                      textColor = "text-blue-600"
-                                      badgeColor = "bg-blue-100 text-blue-800"
-                                      break
-                                    case "visita":
-                                      bgColor = "bg-green-50"
-                                      textColor = "text-green-600"
-                                      badgeColor = "bg-green-100 text-green-800"
-                                      break
-                                    case "ligacao":
-                                      bgColor = "bg-yellow-50"
-                                      textColor = "text-yellow-600"
-                                      badgeColor = "bg-yellow-100 text-yellow-800"
-                                      break
-                                    case "followup":
-                                      bgColor = "bg-orange-50"
-                                      textColor = "text-orange-600"
-                                      badgeColor = "bg-orange-100 text-orange-800"
-                                      break
-                                    case "apresentacao":
-                                      bgColor = "bg-purple-50"
-                                      textColor = "text-purple-600"
-                                      badgeColor = "bg-purple-100 text-purple-800"
-                                      break
-                                    case "negociacao":
-                                      bgColor = "bg-red-50"
-                                      textColor = "text-red-600"
-                                      badgeColor = "bg-red-100 text-red-800"
-                                      break
-                                  }
-
-                                  return (
-                                    <div
-                                      key={appointment.id}
-                                      className={`flex items-center justify-between p-3 ${bgColor} rounded-lg cursor-pointer hover:${bgColor.replace("-50", "-100")} transition-colors`}
-                                    >
-                                      <div className="flex items-center">
-                                        <div
-                                          className={`mr-3 flex h-10 w-10 items-center justify-center rounded-full ${bgColor.replace("-50", "-100")}`}
-                                        >
-                                          <span className={`text-xs font-medium ${textColor}`}>
-                                            {appointmentDate.getDate().toString().padStart(2, "0")}
-                                          </span>
-                                        </div>
-                                        <div>
-                                          <div className="text-sm font-medium text-gray-900">{appointment.title}</div>
-                                          <div className="text-xs text-gray-500">
-                                            {appointmentDate.toLocaleDateString("pt-BR")} às {appointment.time}
+                                        <div className="flex items-center gap-4">
+                                          <div className="text-center">
+                                            <div className="text-lg font-bold text-blue-600">
+                                              {appointment.time.split(":")[0]}
+                                            </div>
+                                            <div className="text-sm text-blue-500">
+                                              {appointment.time.split(":")[1]}
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <h4 className="font-semibold">{appointment.title}</h4>
+                                            <p className="text-sm text-gray-600">{appointment.location}</p>
+                                            {appointment.relatedLead !== "sem-lead" && (
+                                              <p className="text-xs text-blue-600">Lead: {appointment.relatedLead}</p>
+                                            )}
                                           </div>
                                         </div>
+                                        <div className="flex items-center gap-2">
+                                          <span
+                                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                              appointment.type === "reuniao"
+                                                ? "bg-blue-100 text-blue-800"
+                                                : appointment.type === "visita"
+                                                  ? "bg-green-100 text-green-800"
+                                                  : appointment.type === "ligacao"
+                                                    ? "bg-yellow-100 text-yellow-800"
+                                                    : "bg-purple-100 text-purple-800"
+                                            }`}
+                                          >
+                                            {appointment.type === "reuniao"
+                                              ? "Reunião"
+                                              : appointment.type === "visita"
+                                                ? "Visita"
+                                                : appointment.type === "ligacao"
+                                                  ? "Ligação"
+                                                  : "Apresentação"}
+                                          </span>
+                                          <button
+                                            onClick={() => openAppointmentModal(appointment)}
+                                            className="text-blue-600 hover:text-blue-800"
+                                          >
+                                            <Edit className="h-4 w-4" />
+                                          </button>
+                                        </div>
                                       </div>
-                                      <div className="flex items-center gap-2">
-                                        <span className={`rounded-full px-2 py-1 text-xs ${badgeColor}`}>
-                                          {dateLabel}
-                                        </span>
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          className="ml-2 h-8 w-8"
+                                    ))}
+                                  </div>
+                                )}
+                              </CardContent>
+                            </Card>
+                          </div>
+
+                          <div>
+                            <Card className="rounded-2xl">
+                              <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Bell className="h-5 w-5" />
+                                  Próximos Compromissos
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                {upcomingAppointments.length === 0 ? (
+                                  <div className="text-center py-8 text-gray-500">
+                                    <Bell className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                                    <p>Nenhum compromisso futuro</p>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-4">
+                                    {upcomingAppointments.slice(0, 5).map((appointment) => (
+                                      <div
+                                        key={appointment.id}
+                                        className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                                      >
+                                        <div className="text-center min-w-[60px]">
+                                          <div className="text-sm font-bold text-gray-700">
+                                            {new Date(appointment.date).toLocaleDateString("pt-BR", {
+                                              day: "2-digit",
+                                              month: "short",
+                                            })}
+                                          </div>
+                                          <div className="text-xs text-gray-500">{appointment.time}</div>
+                                        </div>
+                                        <div className="flex-1">
+                                          <h4 className="font-medium text-sm">{appointment.title}</h4>
+                                          <p className="text-xs text-gray-600">{appointment.location}</p>
+                                          {appointment.relatedLead !== "sem-lead" && (
+                                            <p className="text-xs text-blue-600">Lead: {appointment.relatedLead}</p>
+                                          )}
+                                        </div>
+                                        <button
                                           onClick={() => openAppointmentModal(appointment)}
+                                          className="text-gray-400 hover:text-gray-600"
                                         >
-                                          <Edit className="h-4 w-4" />
-                                        </Button>
+                                          <Edit className="h-3 w-3" />
+                                        </button>
                                       </div>
-                                    </div>
-                                  )
-                                })
-                              ) : (
-                                <p className="text-sm text-gray-500">Nenhum compromisso para os próximos dias.</p>
-                              )}
+                                    ))}
+                                  </div>
+                                )}
+                              </CardContent>
+                            </Card>
+                          </div>
+                        </div>
+
+                        <Card className="rounded-2xl">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <FileText className="h-5 w-5" />
+                              Tarefas Pendentes
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {[
+                                "Enviar proposta para Maria Silva",
+                                "Agendar visita com João Santos",
+                                "Follow-up com Carlos Lima",
+                                "Preparar apresentação para Ana Costa",
+                                "Atualizar CRM com novos leads",
+                                "Revisar contratos pendentes",
+                              ].map((task, index) => (
+                                <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                  <input
+                                    type="checkbox"
+                                    checked={completedTasks.includes(index)}
+                                    onChange={() => toggleTaskCompletion(index)}
+                                    className="h-4 w-4 text-blue-600 rounded"
+                                  />
+                                  <span
+                                    className={`flex-1 text-sm ${
+                                      completedTasks.includes(index) ? "line-through text-gray-500" : "text-gray-700"
+                                    }`}
+                                  >
+                                    {task}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    {completedTasks.includes(index) ? "Concluída" : "Pendente"}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+
+                    {showNewLeadModal && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Novo Lead</h3>
+                            <button
+                              onClick={() => setShowNewLeadModal(false)}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              ✕
+                            </button>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+                              <input
+                                type="text"
+                                name="nome"
+                                value={leadFormData.nome}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Nome completo"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                              <input
+                                type="email"
+                                name="email"
+                                value={leadFormData.email}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="email@exemplo.com"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                              <input
+                                type="tel"
+                                name="telefone"
+                                value={leadFormData.telefone}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="(11) 99999-9999"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Fonte</label>
+                              <select
+                                name="fonte"
+                                value={leadFormData.fonte}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Selecione a fonte</option>
+                                <option value="Site">Site</option>
+                                <option value="Google">Google</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Recomendacao">Recomendação</option>
+                                <option value="Indicação">Indicação</option>
+                                <option value="Outros">Outros</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Interesse</label>
+                              <select
+                                name="tipoInteresse"
+                                value={leadFormData.tipoInteresse}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Selecione o tipo</option>
+                                <option value="Curta Temporada">Curta Temporada</option>
+                                <option value="Longa Temporada">Longa Temporada</option>
+                                <option value="Morar">Morar</option>
+                                <option value="Investimento">Investimento</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Qualificação</label>
+                              <select
+                                name="temperatura"
+                                value={leadFormData.temperatura}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Selecione a qualificação</option>
+                                <option value="Quente">🔥 Quente</option>
+                                <option value="Morno">🌡️ Morno</option>
+                                <option value="Frio">❄️ Frio</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Orçamento</label>
+                              <input
+                                type="text"
+                                name="orcamento"
+                                value={leadFormData.orcamento}
+                                onChange={handleInputChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="R$ 450.000"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                              <textarea
+                                name="observacoes"
+                                value={leadFormData.observacoes}
+                                onChange={handleInputChange}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Observações adicionais..."
+                              />
                             </div>
                           </div>
 
-                          {/* Tarefas Pendentes */}
-                          <div className="bg-white rounded-lg border border-gray-200 p-6">
-                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                              <svg
-                                className="w-5 h-5 mr-2 text-orange-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2m-6 9l2 2 4-4"
-                                />
-                              </svg>
-                              Tarefas Pendentes
-                            </h4>
+                          <div className="flex justify-end gap-3 mt-6">
+                            <button
+                              onClick={() => setShowNewLeadModal(false)}
+                              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={handleSaveLead}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            >
+                              Salvar Lead
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              <div className="flex items-center p-3 bg-red-50 rounded-lg border border-red-200">
-                                <input
-                                  type="checkbox"
-                                  className="mr-3 text-red-600"
-                                  checked={completedTasks.includes(0)}
-                                  onChange={() => toggleTaskCompletion(0)}
-                                />
-                                <div className="flex-1">
-                                  <div
-                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(0) ? "line-through opacity-60" : ""}`}
-                                  >
-                                    Enviar contrato - João Santos
-                                  </div>
-                                  <div className="text-xs text-red-600">Venceu ontem</div>
+                    {showLeadModal && selectedLead && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">
+                              {actionType === "view"
+                                ? "Detalhes do Lead"
+                                : actionType === "edit"
+                                  ? "Editar Lead"
+                                  : actionType === "call"
+                                    ? "Ligar para Lead"
+                                    : "Enviar Email"}
+                            </h3>
+                            <button
+                              onClick={() => setShowLeadModal(false)}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              ✕
+                            </button>
+                          </div>
+
+                          {actionType === "view" && (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Nome</label>
+                                  <p className="text-gray-900">{selectedLead.nome}</p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                                  <p className="text-gray-900">{selectedLead.email}</p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Telefone</label>
+                                  <p className="text-gray-900">{selectedLead.telefone}</p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Fonte</label>
+                                  <p className="text-gray-900">{selectedLead.fonte}</p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Tipo de Interesse</label>
+                                  <p className="text-gray-900">{selectedLead.tipoInteresse}</p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Status</label>
+                                  <p className="text-gray-900">{selectedLead.status}</p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Orçamento</label>
+                                  <p className="text-gray-900">
+                                    {selectedLead.orcamento.toLocaleString("pt-BR", {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    })}
+                                  </p>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Data</label>
+                                  <p className="text-gray-900">{selectedLead.data}</p>
                                 </div>
                               </div>
+                              {selectedLead.observacoes && (
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700">Observações</label>
+                                  <p className="text-gray-900">{selectedLead.observacoes}</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
 
-                              <div className="flex items-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                                <input
-                                  type="checkbox"
-                                  className="mr-3 text-yellow-600"
-                                  checked={completedTasks.includes(1)}
-                                  onChange={() => toggleTaskCompletion(1)}
-                                />
-                                <div className="flex-1">
-                                  <div
-                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(1) ? "line-through opacity-60" : ""}`}
+                          {actionType === "edit" && (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
+                                  <input
+                                    type="text"
+                                    name="nome"
+                                    value={leadFormData.nome}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                                  <input
+                                    type="email"
+                                    name="email"
+                                    value={leadFormData.email}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                                  <input
+                                    type="tel"
+                                    name="telefone"
+                                    value={leadFormData.telefone}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Fonte</label>
+                                  <select
+                                    name="fonte"
+                                    value={leadFormData.fonte}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                   >
-                                    Follow-up Maria Silva
-                                  </div>
-                                  <div className="text-xs text-yellow-600">Hoje</div>
+                                    <option value="">Selecione a fonte</option>
+                                    <option value="Site">Site</option>
+                                    <option value="Google">Google</option>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Facebook">Facebook</option>
+                                    <option value="Recomendacao">Recomendação</option>
+                                    <option value="Indicação">Indicação</option>
+                                    <option value="Outros">Outros</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Tipo de Interesse
+                                  </label>
+                                  <select
+                                    name="tipoInteresse"
+                                    value={leadFormData.tipoInteresse}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  >
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="Curta Temporada">Curta Temporada</option>
+                                    <option value="Longa Temporada">Longa Temporada</option>
+                                    <option value="Morar">Morar</option>
+                                    <option value="Investimento">Investimento</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Qualificação</label>
+                                  <select
+                                    name="temperatura"
+                                    value={leadFormData.temperatura}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  >
+                                    <option value="">Selecione a qualificação</option>
+                                    <option value="Quente">🔥 Quente</option>
+                                    <option value="Morno">🌡️ Morno</option>
+                                    <option value="Frio">❄️ Frio</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Orçamento</label>
+                                  <input
+                                    type="text"
+                                    name="orcamento"
+                                    value={leadFormData.orcamento}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  />
                                 </div>
                               </div>
-
-                              <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                <input
-                                  type="checkbox"
-                                  className="mr-3 text-blue-600"
-                                  checked={completedTasks.includes(2)}
-                                  onChange={() => toggleTaskCompletion(2)}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                                <textarea
+                                  name="observacoes"
+                                  value={leadFormData.observacoes}
+                                  onChange={handleInputChange}
+                                  rows={3}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
-                                <div className="flex-1">
-                                  <div
-                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(2) ? "line-through opacity-60" : ""}`}
-                                  >
-                                    Pesquisar propriedades - Ana Costa
-                                  </div>
-                                  <div className="text-xs text-blue-600">Amanhã</div>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                                <input
-                                  type="checkbox"
-                                  className="mr-3 text-green-600"
-                                  checked={completedTasks.includes(3)}
-                                  onChange={() => toggleTaskCompletion(3)}
-                                />
-                                <div className="flex-1">
-                                  <div
-                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(3) ? "line-through opacity-60" : ""}`}
-                                  >
-                                    Agendar visita - Carlos Lima
-                                  </div>
-                                  <div className="text-xs text-green-600">Em 3 dias</div>
-                                </div>
                               </div>
                             </div>
+                          )}
+
+                          {actionType === "call" && (
+                            <div className="space-y-4">
+                              <div className="bg-green-50 p-4 rounded-lg">
+                                <h4 className="font-medium text-green-800 mb-2">Informações para Ligação</h4>
+                                <p>
+                                  <strong>Nome:</strong> {selectedLead.nome}
+                                </p>
+                                <p>
+                                  <strong>Telefone:</strong> {selectedLead.telefone}
+                                </p>
+                                <p>
+                                  <strong>Interesse:</strong> {selectedLead.tipoInteresse}
+                                </p>
+                                <p>
+                                  <strong>Orçamento:</strong>{" "}
+                                  {selectedLead.orcamento.toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  })}
+                                </p>
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Notas da Ligação</label>
+                                <textarea
+                                  rows={4}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Anote aqui os pontos importantes da conversa..."
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {actionType === "email" && (
+                            <div className="space-y-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Para</label>
+                                <input
+                                  type="email"
+                                  value={selectedLead.email}
+                                  readOnly
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Assunto</label>
+                                <input
+                                  type="text"
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Assunto do email"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
+                                <textarea
+                                  rows={6}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder={`Olá ${selectedLead.nome},\n\nEspero que esteja bem. Gostaria de dar continuidade à nossa conversa sobre ${selectedLead.tipoInteresse}...\n\nAguardo seu retorno.\n\nAtenciosamente,\n[Seu Nome]`}
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex justify-end gap-3 mt-6">
+                            <button
+                              onClick={() => setShowLeadModal(false)}
+                              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                              {actionType === "view" ? "Fechar" : "Cancelar"}
+                            </button>
+                            {actionType === "edit" && (
+                              <button
+                                onClick={handleUpdateLead}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                              >
+                                Salvar Alterações
+                              </button>
+                            )}
+                            {actionType === "call" && (
+                              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                Salvar Notas
+                              </button>
+                            )}
+                            {actionType === "email" && (
+                              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Enviar Email
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {showReportModal && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                          <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-semibold">Relatório de Leads</h3>
+                            <button
+                              onClick={() => setShowReportModal(false)}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              ✕
+                            </button>
+                          </div>
+
+                          {(() => {
+                            const reportData = generateReportData()
+                            return (
+                              <div className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                  <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-blue-800">Total de Leads</h4>
+                                    <p className="text-2xl font-bold text-blue-600">{reportData.totalLeads}</p>
+                                  </div>
+                                  <div className="bg-green-50 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-green-800">Taxa de Conversão</h4>
+                                    <p className="text-2xl font-bold text-green-600">{reportData.taxaConversao}%</p>
+                                  </div>
+                                  <div className="bg-purple-50 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-purple-800">Valor Total</h4>
+                                    <p className="text-2xl font-bold text-purple-600">
+                                      {reportData.valorTotal.toLocaleString("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      })}
+                                    </p>
+                                  </div>
+                                  <div className="bg-orange-50 p-4 rounded-lg">
+                                    <h4 className="font-semibold text-orange-800">Ticket Médio</h4>
+                                    <p className="text-2xl font-bold text-orange-600">
+                                      {reportData.valorMedio.toLocaleString("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      })}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                  <div className="bg-white border rounded-lg p-4">
+                                    <h4 className="font-semibold mb-3">Leads por Status</h4>
+                                    <div className="space-y-2">
+                                      {Object.entries(reportData.leadsPorStatus).map(([status, count]) => (
+                                        <div key={status} className="flex justify-between">
+                                          <span className="capitalize">{status}</span>
+                                          <span className="font-medium">{count}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  <div className="bg-white border rounded-lg p-4">
+                                    <h4 className="font-semibold mb-3">Leads por Fonte</h4>
+                                    <div className="space-y-2">
+                                      {Object.entries(reportData.leadsPorFonte).map(([fonte, count]) => (
+                                        <div key={fonte} className="flex justify-between">
+                                          <span>{fonte}</span>
+                                          <span className="font-medium">{count}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  <div className="bg-white border rounded-lg p-4">
+                                    <h4 className="font-semibold mb-3">Leads por Qualificação</h4>
+                                    <div className="space-y-2">
+                                      {Object.entries(reportData.leadsPorTemperatura).map(([temp, count]) => (
+                                        <div key={temp} className="flex justify-between">
+                                          <span className="capitalize">
+                                            {temp === "quente" ? "🔥 Quente" : temp === "morno" ? "🌡️ Morno" : "❄️ Frio"}
+                                          </span>
+                                          <span className="font-medium">{count}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="bg-white border rounded-lg p-4">
+                                  <h4 className="font-semibold mb-3">Resumo Executivo</h4>
+                                  <div className="text-sm text-gray-600 space-y-2">
+                                    <p>
+                                      • Total de {reportData.totalLeads} leads cadastrados no sistema, com uma taxa de
+                                      conversão de {reportData.taxaConversao}%.
+                                    </p>
+                                    <p>
+                                      • O valor total em negociações é de{" "}
+                                      {reportData.valorTotal.toLocaleString("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      })}
+                                      , com ticket médio de{" "}
+                                      {reportData.valorMedio.toLocaleString("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      })}
+                                      .
+                                    </p>
+                                    <p>
+                                      • A principal fonte de leads é{" "}
+                                      {Object.entries(reportData.leadsPorFonte).sort(([, a], [, b]) => b - a)[0]?.[0]}{" "}
+                                      com{" "}
+                                      {Object.entries(reportData.leadsPorFonte).sort(([, a], [, b]) => b - a)[0]?.[1]}{" "}
+                                      leads.
+                                    </p>
+                                    <p>
+                                      • Temos {reportData.leadsPorTemperatura.quente} leads qualificados como "Quente",
+                                      representando alta probabilidade de conversão.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })()}
+
+                          <div className="flex justify-end gap-3 mt-6">
+                            <button
+                              onClick={() => setShowReportModal(false)}
+                              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                              Fechar
+                            </button>
+                            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                              Exportar PDF
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {showAppointmentModal && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">
+                              {editingAppointment ? "Editar Compromisso" : "Novo Compromisso"}
+                            </h3>
+                            <button
+                              onClick={() => setShowAppointmentModal(false)}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              ✕
+                            </button>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
+                              <input
+                                type="text"
+                                value={newAppointmentTitle}
+                                onChange={(e) => setNewAppointmentTitle(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Ex: Reunião com cliente"
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Data *</label>
+                                <input
+                                  type="date"
+                                  value={newAppointmentDate}
+                                  onChange={(e) => setNewAppointmentDate(e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Horário *</label>
+                                <input
+                                  type="time"
+                                  value={newAppointmentTime}
+                                  onChange={(e) => setNewAppointmentTime(e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                              <select
+                                value={newAppointmentType}
+                                onChange={(e) => setNewAppointmentType(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Selecione o tipo</option>
+                                <option value="reuniao">Reunião</option>
+                                <option value="visita">Visita</option>
+                                <option value="ligacao">Ligação</option>
+                                <option value="apresentacao">Apresentação</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Lead Relacionado</label>
+                              <select
+                                value={newAppointmentRelatedLead}
+                                onChange={(e) => setNewAppointmentRelatedLead(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Selecione um lead</option>
+                                <option value="sem-lead">Sem lead relacionado</option>
+                                {leadsList.map((lead) => (
+                                  <option key={lead.id} value={lead.nome}>
+                                    {lead.nome}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Lembrete</label>
+                              <select
+                                value={newAppointmentReminder}
+                                onChange={(e) => setNewAppointmentReminder(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="">Sem lembrete</option>
+                                <option value="15min">15 minutos antes</option>
+                                <option value="30min">30 minutos antes</option>
+                                <option value="1hora">1 hora antes</option>
+                                <option value="1dia">1 dia antes</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Local</label>
+                              <input
+                                type="text"
+                                value={newAppointmentLocation}
+                                onChange={(e) => setNewAppointmentLocation(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Ex: Escritório, Endereço, Videochamada"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+                              <textarea
+                                value={newAppointmentNotes}
+                                onChange={(e) => setNewAppointmentNotes(e.target.value)}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Observações adicionais..."
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex justify-end gap-3 mt-6">
+                            <button
+                              onClick={() => setShowAppointmentModal(false)}
+                              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={handleSaveOrUpdateAppointment}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            >
+                              {editingAppointment ? "Atualizar" : "Salvar"}
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -3128,597 +3573,8 @@ export function DesignaliCreative() {
           </Tabs>
         </main>
       </div>
-
-      {/* Modal para Novo Lead */}
-      {showNewLeadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-6">Novo Lead</h2>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="nome" className="block text-sm font-medium text-gray-700">
-                  Nome
-                </label>
-                <Input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  value={leadFormData.nome}
-                  onChange={handleInputChange}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <Input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={leadFormData.email}
-                  onChange={handleInputChange}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="telefone" className="block text-sm font-medium text-gray-700">
-                  Telefone
-                </label>
-                <Input
-                  type="tel"
-                  id="telefone"
-                  name="telefone"
-                  value={leadFormData.telefone}
-                  onChange={handleInputChange}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="fonte" className="block text-sm font-medium text-gray-700">
-                  Fonte
-                </label>
-                <select
-                  id="fonte"
-                  name="fonte"
-                  value={leadFormData.fonte}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="">Selecione</option>
-                  <option value="Site">Site</option>
-                  <option value="Google">Google</option>
-                  <option value="Instagram">Instagram</option>
-                  <option value="Recomendacao">Recomendação</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="tipoInteresse" className="block text-sm font-medium text-gray-700">
-                  Tipo de Interesse
-                </label>
-                <select
-                  id="tipoInteresse"
-                  name="tipoInteresse"
-                  value={leadFormData.tipoInteresse}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="">Selecione</option>
-                  <option value="Curta Temporada">Curta Temporada</option>
-                  <option value="Longa Temporada">Longa Temporada</option>
-                  <option value="Morar">Morar</option>
-                </select>
-              </div>
-              {/* New field for temperature */}
-              <div>
-                <label htmlFor="temperatura" className="block text-sm font-medium text-gray-700">
-                  Qualificação
-                </label>
-                <select
-                  id="temperatura"
-                  name="temperatura"
-                  value={leadFormData.temperatura}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="">Selecione</option>
-                  <option value="Quente">🔥 Quente</option>
-                  <option value="Morno">🌡️ Morno</option>
-                  <option value="Frio">❄️ Frio</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="orcamento" className="block text-sm font-medium text-gray-700">
-                  Orçamento
-                </label>
-                <Input
-                  type="text"
-                  id="orcamento"
-                  name="orcamento"
-                  value={leadFormData.orcamento}
-                  onChange={handleInputChange}
-                  placeholder="R$ 0,00"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="observacoes" className="block text-sm font-medium text-gray-700">
-                  Observações
-                </label>
-                <textarea
-                  id="observacoes"
-                  name="observacoes"
-                  value={leadFormData.observacoes}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-4">
-              <button
-                type="button"
-                className="px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-100"
-                onClick={() => setShowNewLeadModal(false)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                onClick={handleSaveLead}
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal para Visualizar/Editar Lead */}
-      {showLeadModal && selectedLead && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-6">
-              {actionType === "view" ? "Detalhes do Lead" : actionType === "edit" ? "Editar Lead" : selectedLead.nome}
-            </h2>
-            {actionType === "view" ? (
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Nome</p>
-                  <p className="text-gray-900">{selectedLead.nome}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Email</p>
-                  <p className="text-gray-900">{selectedLead.email}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Telefone</p>
-                  <p className="text-gray-900">{selectedLead.telefone}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Fonte</p>
-                  <p className="text-gray-900">{selectedLead.fonte}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Tipo de Interesse</p>
-                  <p className="text-gray-900">{selectedLead.tipoInteresse}</p>
-                </div>
-                {/* Display the new temperature field */}
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Qualificação</p>
-                  <p className="text-gray-900">{selectedLead.temperatura}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Orçamento</p>
-                  <p className="text-gray-900">
-                    {selectedLead.orcamento.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Status</p>
-                  <p className="text-gray-900">{selectedLead.status}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Data</p>
-                  <p className="text-gray-900">{selectedLead.data}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Observações</p>
-                  <p className="text-gray-900">{selectedLead.observacoes}</p>
-                </div>
-              </div>
-            ) : actionType === "edit" ? (
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="nome" className="block text-sm font-medium text-gray-700">
-                    Nome
-                  </label>
-                  <Input
-                    type="text"
-                    id="nome"
-                    name="nome"
-                    value={leadFormData.nome}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email
-                  </label>
-                  <Input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={leadFormData.email}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="telefone" className="block text-sm font-medium text-gray-700">
-                    Telefone
-                  </label>
-                  <Input
-                    type="tel"
-                    id="telefone"
-                    name="telefone"
-                    value={leadFormData.telefone}
-                    onChange={handleInputChange}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="fonte" className="block text-sm font-medium text-gray-700">
-                    Fonte
-                  </label>
-                  <select
-                    id="fonte"
-                    name="fonte"
-                    value={leadFormData.fonte}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  >
-                    <option value="">Selecione</option>
-                    <option value="Site">Site</option>
-                    <option value="Google">Google</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="Recomendacao">Recomendação</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="tipoInteresse" className="block text-sm font-medium text-gray-700">
-                    Tipo de Interesse
-                  </label>
-                  <select
-                    id="tipoInteresse"
-                    name="tipoInteresse"
-                    value={leadFormData.tipoInteresse}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  >
-                    <option value="">Selecione</option>
-                    <option value="Curta Temporada">Curta Temporada</option>
-                    <option value="Longa Temporada">Longa Temporada</option>
-                    <option value="Morar">Morar</option>
-                  </select>
-                </div>
-                {/* New field for temperature */}
-                <div>
-                  <label htmlFor="temperatura" className="block text-sm font-medium text-gray-700">
-                    Qualificação
-                  </label>
-                  <select
-                    id="temperatura"
-                    name="temperatura"
-                    value={leadFormData.temperatura}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  >
-                    <option value="">Selecione</option>
-                    <option value="Quente">🔥 Quente</option>
-                    <option value="Morno">🌡️ Morno</option>
-                    <option value="Frio">❄️ Frio</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="orcamento" className="block text-sm font-medium text-gray-700">
-                    Orçamento
-                  </label>
-                  <Input
-                    type="text"
-                    id="orcamento"
-                    name="orcamento"
-                    value={leadFormData.orcamento}
-                    onChange={handleInputChange}
-                    placeholder="R$ 0,00"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="observacoes" className="block text-sm font-medium text-gray-700">
-                    Observações
-                  </label>
-                  <textarea
-                    id="observacoes"
-                    name="observacoes"
-                    value={leadFormData.observacoes}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {actionType === "call" && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Ligar para</p>
-                    <p className="text-gray-900">{selectedLead.telefone}</p>
-                  </div>
-                )}
-                {actionType === "email" && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Enviar email para</p>
-                    <p className="text-gray-900">{selectedLead.email}</p>
-                  </div>
-                )}
-              </div>
-            )}
-            <div className="mt-6 flex justify-end gap-4">
-              <button
-                type="button"
-                className="px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-100"
-                onClick={() => setShowLeadModal(false)}
-              >
-                Cancelar
-              </button>
-              {actionType === "edit" ? (
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  onClick={handleUpdateLead}
-                >
-                  Salvar
-                </button>
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal para Relatório */}
-      {showReportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-6">Relatório de Leads</h2>
-            {(() => {
-              const reportData = generateReportData()
-              return (
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Total de Leads</p>
-                    <p className="text-gray-900">{reportData.totalLeads}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Leads por Status</p>
-                    <ul className="list-disc pl-5">
-                      <li>Novo: {reportData.leadsPorStatus.novo}</li>
-                      <li>Qualificado: {reportData.leadsPorStatus.qualificado}</li>
-                      <li>Proposta: {reportData.leadsPorStatus.proposta}</li>
-                      <li>Negociação: {reportData.leadsPorStatus.negociacao}</li>
-                      <li>Fechado: {reportData.leadsPorStatus.fechado}</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Leads por Fonte</p>
-                    <ul className="list-disc pl-5">
-                      {Object.entries(reportData.leadsPorFonte).map(([fonte, quantidade]) => (
-                        <li key={fonte}>
-                          {fonte}: {quantidade}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  {/* Display leads by temperature */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Leads por Qualificação</p>
-                    <ul className="list-disc pl-5">
-                      <li>Quente: {reportData.leadsPorTemperatura.quente}</li>
-                      <li>Morno: {reportData.leadsPorTemperatura.morno}</li>
-                      <li>Frio: {reportData.leadsPorTemperatura.frio}</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Valor Total</p>
-                    <p className="text-gray-900">
-                      {reportData.valorTotal.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Valor Médio</p>
-                    <p className="text-gray-900">
-                      {reportData.valorMedio.toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Taxa de Conversão</p>
-                    <p className="text-gray-900">{reportData.taxaConversao}%</p>
-                  </div>
-                </div>
-              )
-            })()}
-            <div className="mt-6 flex justify-end">
-              <button
-                type="button"
-                className="px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-100"
-                onClick={() => setShowReportModal(false)}
-              >
-                Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal para Novo Compromisso */}
-      {showAppointmentModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-semibold mb-6">
-              {editingAppointment ? "Editar Compromisso" : "Novo Compromisso"}
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="newAppointmentTitle" className="block text-sm font-medium text-gray-700">
-                  Título
-                </label>
-                <Input
-                  type="text"
-                  id="newAppointmentTitle"
-                  name="newAppointmentTitle"
-                  value={newAppointmentTitle}
-                  onChange={(e) => setNewAppointmentTitle(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="newAppointmentDate" className="block text-sm font-medium text-gray-700">
-                  Data
-                </label>
-                <Input
-                  type="date"
-                  id="newAppointmentDate"
-                  name="newAppointmentDate"
-                  value={newAppointmentDate}
-                  onChange={(e) => setNewAppointmentDate(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="newAppointmentTime" className="block text-sm font-medium text-gray-700">
-                  Horário
-                </label>
-                <Input
-                  type="time"
-                  id="newAppointmentTime"
-                  name="newAppointmentTime"
-                  value={newAppointmentTime}
-                  onChange={(e) => setNewAppointmentTime(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              {/* New fields for appointment details */}
-              <div>
-                <label htmlFor="newAppointmentType" className="block text-sm font-medium text-gray-700">
-                  Tipo
-                </label>
-                <select
-                  id="newAppointmentType"
-                  name="newAppointmentType"
-                  value={newAppointmentType}
-                  onChange={(e) => setNewAppointmentType(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="">Selecione</option>
-                  <option value="reuniao">Reunião</option>
-                  <option value="visita">Visita</option>
-                  <option value="ligacao">Ligação</option>
-                  <option value="followup">Follow-up</option>
-                  <option value="apresentacao">Apresentação</option>
-                  <option value="negociacao">Negociação</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="newAppointmentRelatedLead" className="block text-sm font-medium text-gray-700">
-                  Lead Relacionado
-                </label>
-                <Input
-                  type="text"
-                  id="newAppointmentRelatedLead"
-                  name="newAppointmentRelatedLead"
-                  value={newAppointmentRelatedLead}
-                  onChange={(e) => setNewAppointmentRelatedLead(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="newAppointmentReminder" className="block text-sm font-medium text-gray-700">
-                  Lembrete
-                </label>
-                <select
-                  id="newAppointmentReminder"
-                  name="newAppointmentReminder"
-                  value={newAppointmentReminder}
-                  onChange={(e) => setNewAppointmentReminder(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="">Selecione</option>
-                  <option value="5min">5 minutos antes</option>
-                  <option value="15min">15 minutos antes</option>
-                  <option value="30min">30 minutos antes</option>
-                  <option value="1hora">1 hora antes</option>
-                  <option value="1dia">1 dia antes</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="newAppointmentLocation" className="block text-sm font-medium text-gray-700">
-                  Localização
-                </label>
-                <Input
-                  type="text"
-                  id="newAppointmentLocation"
-                  name="newAppointmentLocation"
-                  value={newAppointmentLocation}
-                  onChange={(e) => setNewAppointmentLocation(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="newAppointmentNotes" className="block text-sm font-medium text-gray-700">
-                  Observações
-                </label>
-                <textarea
-                  id="newAppointmentNotes"
-                  name="newAppointmentNotes"
-                  value={newAppointmentNotes}
-                  onChange={(e) => setNewAppointmentNotes(e.target.value)}
-                  rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-4">
-              <button
-                type="button"
-                className="px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-100"
-                onClick={() => setShowAppointmentModal(false)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                onClick={handleSaveOrUpdateAppointment}
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
+
+export default DesignaliCreative
