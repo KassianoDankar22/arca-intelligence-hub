@@ -433,6 +433,7 @@ export function DesignaliCreative() {
   const [newAppointmentDate, setNewAppointmentDate] = useState("")
   const [newAppointmentTime, setNewAppointmentTime] = useState("")
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false)
+  const [completedTasks, setCompletedTasks] = useState<number[]>([])
 
   const [leadsList, setLeadsList] = useState([
     {
@@ -696,6 +697,16 @@ export function DesignaliCreative() {
     }
     setDraggedLead(null)
     setDragOverColumn("")
+  }
+
+  const toggleTaskCompletion = (taskIndex: number) => {
+    setCompletedTasks((prev) => {
+      if (prev.includes(taskIndex)) {
+        return prev.filter((index) => index !== taskIndex)
+      } else {
+        return [...prev, taskIndex]
+      }
+    })
   }
 
   return (
@@ -2689,25 +2700,50 @@ export function DesignaliCreative() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               <div className="flex items-center p-3 bg-red-50 rounded-lg border border-red-200">
-                                <input type="checkbox" className="mr-3 text-red-600" />
+                                <input
+                                  type="checkbox"
+                                  className="mr-3 text-red-600"
+                                  checked={completedTasks.includes(0)}
+                                  onChange={() => toggleTaskCompletion(0)}
+                                />
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Enviar contrato - João Santos</div>
+                                  <div
+                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(0) ? "line-through opacity-60" : ""}`}
+                                  >
+                                    Enviar contrato - João Santos
+                                  </div>
                                   <div className="text-xs text-red-600">Venceu ontem</div>
                                 </div>
                               </div>
 
                               <div className="flex items-center p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                                <input type="checkbox" className="mr-3 text-yellow-600" />
+                                <input
+                                  type="checkbox"
+                                  className="mr-3 text-yellow-600"
+                                  checked={completedTasks.includes(1)}
+                                  onChange={() => toggleTaskCompletion(1)}
+                                />
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Follow-up Maria Silva</div>
+                                  <div
+                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(1) ? "line-through opacity-60" : ""}`}
+                                  >
+                                    Follow-up Maria Silva
+                                  </div>
                                   <div className="text-xs text-yellow-600">Hoje</div>
                                 </div>
                               </div>
 
                               <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                <input type="checkbox" className="mr-3 text-blue-600" />
+                                <input
+                                  type="checkbox"
+                                  className="mr-3 text-blue-600"
+                                  checked={completedTasks.includes(2)}
+                                  onChange={() => toggleTaskCompletion(2)}
+                                />
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">
+                                  <div
+                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(2) ? "line-through opacity-60" : ""}`}
+                                  >
                                     Pesquisar propriedades - Ana Costa
                                   </div>
                                   <div className="text-xs text-blue-600">Amanhã</div>
@@ -2715,25 +2751,52 @@ export function DesignaliCreative() {
                               </div>
 
                               <div className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
-                                <input type="checkbox" className="mr-3 text-green-600" />
+                                <input
+                                  type="checkbox"
+                                  className="mr-3 text-green-600"
+                                  checked={completedTasks.includes(3)}
+                                  onChange={() => toggleTaskCompletion(3)}
+                                />
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Preparar apresentação</div>
+                                  <div
+                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(3) ? "line-through opacity-60" : ""}`}
+                                  >
+                                    Preparar apresentação
+                                  </div>
                                   <div className="text-xs text-green-600">Esta semana</div>
                                 </div>
                               </div>
 
                               <div className="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200">
-                                <input type="checkbox" className="mr-3 text-purple-600" />
+                                <input
+                                  type="checkbox"
+                                  className="mr-3 text-purple-600"
+                                  checked={completedTasks.includes(4)}
+                                  onChange={() => toggleTaskCompletion(4)}
+                                />
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Atualizar CRM</div>
+                                  <div
+                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(4) ? "line-through opacity-60" : ""}`}
+                                  >
+                                    Atualizar CRM
+                                  </div>
                                   <div className="text-xs text-purple-600">Esta semana</div>
                                 </div>
                               </div>
 
                               <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                <input type="checkbox" className="mr-3 text-gray-600" />
+                                <input
+                                  type="checkbox"
+                                  className="mr-3 text-gray-600"
+                                  checked={completedTasks.includes(5)}
+                                  onChange={() => toggleTaskCompletion(5)}
+                                />
                                 <div className="flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Revisar contratos</div>
+                                  <div
+                                    className={`text-sm font-medium text-gray-900 ${completedTasks.includes(5) ? "line-through opacity-60" : ""}`}
+                                  >
+                                    Revisar contratos
+                                  </div>
                                   <div className="text-xs text-gray-600">Próxima semana</div>
                                 </div>
                               </div>
