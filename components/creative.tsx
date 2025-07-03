@@ -37,6 +37,7 @@ import {
   User,
   Plus,
   Phone,
+  Edit,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -57,6 +58,19 @@ import { BackgroundBeams } from "@/components/ui/background-beams"
 import RoiToolInterface from "@/components/roi-tool-interface"
 import { AIAssistantInterface } from "@/components/ui/ai-assistant-interface"
 import { StarBorder } from "@/components/ui/star-border"
+
+// Definir interface para Compromisso
+interface Appointment {
+  id: number
+  title: string
+  date: string // Formato YYYY-MM-DD
+  time: string // Formato HH:MM
+  type: string
+  relatedLead: string
+  reminder: string
+  location: string
+  notes: string
+}
 
 // Sample data for apps
 const apps = [
@@ -437,9 +451,79 @@ export function DesignaliCreative() {
   const [newAppointmentReminder, setNewAppointmentReminder] = useState("") // NOVO ESTADO
   const [newAppointmentLocation, setNewAppointmentLocation] = useState("") // NOVO ESTADO
   const [newAppointmentNotes, setNewAppointmentNotes] = useState("") // NOVO ESTADO
-  const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false)
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false) // Renomeado de showNewAppointmentModal
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null) // Novo estado para edição
   const [completedTasks, setCompletedTasks] = useState<number[]>([])
-  const [newAppointments, setNewAppointments] = useState<any[]>([]) // Estado para armazenar os novos compromissos
+  const [newAppointments, setNewAppointments] = useState<Appointment[]>([
+    // Compromissos de exemplo para "Hoje"
+    {
+      id: 1,
+      title: "Reunião com Maria Silva",
+      date: "2024-07-01",
+      time: "09:00",
+      type: "reuniao",
+      relatedLead: "Maria Silva",
+      reminder: "15min",
+      location: "Escritório Central",
+      notes: "Apresentação de propriedades",
+    },
+    {
+      id: 2,
+      title: "Visita - João Santos",
+      date: "2024-07-01",
+      time: "14:00",
+      type: "visita",
+      relatedLead: "João Santos",
+      reminder: "30min",
+      location: "1234 Main St, Kissimmee",
+      notes: "Casa em Kissimmee",
+    },
+    {
+      id: 3,
+      title: "Follow-up Carlos Lima",
+      date: "2024-07-01",
+      time: "16:30",
+      type: "ligacao",
+      relatedLead: "Carlos Lima",
+      reminder: "1hora",
+      location: "Ligação agendada",
+      notes: "Retorno sobre proposta",
+    },
+    // Compromissos de exemplo para "Próximos Dias"
+    {
+      id: 4,
+      title: "Visita - Ana Costa",
+      date: "2024-07-02", // Amanhã
+      time: "10:00",
+      type: "visita",
+      relatedLead: "Ana Costa",
+      reminder: "1dia",
+      location: "456 Oak Ave, Orlando",
+      notes: "Apresentar opções de longa temporada",
+    },
+    {
+      id: 5,
+      title: "Reunião Equipe",
+      date: "2024-07-03", // Depois de amanhã
+      time: "09:00",
+      type: "reuniao",
+      relatedLead: "sem-lead",
+      reminder: "1hora",
+      location: "Sala de Reuniões",
+      notes: "Planejamento semanal",
+    },
+    {
+      id: 6,
+      title: "Apresentação Lucia",
+      date: "2024-07-05", // Daqui a alguns dias
+      time: "15:00",
+      type: "apresentacao",
+      relatedLead: "Lucia Mendes",
+      reminder: "1dia",
+      location: "Videochamada",
+      notes: "Apresentação de ROI para investimento",
+    },
+  ])
 
   const [leadsList, setLeadsList] = useState([
     {
@@ -479,7 +563,6 @@ export function DesignaliCreative() {
       status: "Fechado",
       temperatura: "Quente",
       data: "28/06/2024",
-      observacoes: "",
     },
     {
       id: 4,
@@ -492,7 +575,18 @@ export function DesignaliCreative() {
       status: "Negociação",
       temperatura: "Frio",
       data: "27/06/2024",
-      observacoes: "",
+    },
+    {
+      id: 5,
+      nome: "Lucia Mendes",
+      email: "lucia@email.com",
+      telefone: "(81) 55555-5555",
+      fonte: "Indicação",
+      tipoInteresse: "Curta Temporada",
+      orcamento: 500000,
+      status: "Qualificado",
+      temperatura: "Quente",
+      data: "01/07/2024",
     },
   ])
 
@@ -715,14 +809,41 @@ export function DesignaliCreative() {
     })
   }
 
-  const handleSaveAppointment = () => {
+  // Função para abrir o modal de compromisso (novo ou edição)
+  const openAppointmentModal = (appointmentToEdit: Appointment | null = null) => {
+    if (appointmentToEdit) {
+      setEditingAppointment(appointmentToEdit)
+      setNewAppointmentTitle(appointmentToEdit.title)
+      setNewAppointmentDate(appointmentToEdit.date)
+      setNewAppointmentTime(appointmentToEdit.time)
+      setNewAppointmentType(appointmentToEdit.type)
+      setNewAppointmentRelatedLead(appointmentToEdit.relatedLead)
+      setNewAppointmentReminder(appointmentToEdit.reminder)
+      setNewAppointmentLocation(appointmentToEdit.location)
+      setNewAppointmentNotes(appointmentToEdit.notes)
+    } else {
+      setEditingAppointment(null)
+      setNewAppointmentTitle("")
+      setNewAppointmentDate("")
+      setNewAppointmentTime("")
+      setNewAppointmentType("")
+      setNewAppointmentRelatedLead("")
+      setNewAppointmentReminder("")
+      setNewAppointmentLocation("")
+      setNewAppointmentNotes("")
+    }
+    setShowAppointmentModal(true)
+  }
+
+  // Função para salvar ou atualizar compromisso
+  const handleSaveOrUpdateAppointment = () => {
+    // Validação
     if (!newAppointmentTitle || !newAppointmentDate || !newAppointmentTime) {
       alert("Por favor, preencha o título, data e horário do compromisso.")
       return
     }
 
-    const newAppointment = {
-      id: newAppointments.length + 1,
+    const appointmentData = {
       title: newAppointmentTitle,
       date: newAppointmentDate,
       time: newAppointmentTime,
@@ -733,10 +854,21 @@ export function DesignaliCreative() {
       notes: newAppointmentNotes,
     }
 
-    setNewAppointments((prev) => [...prev, newAppointment])
-    setShowNewAppointmentModal(false)
-    alert("Compromisso salvo com sucesso!")
+    if (editingAppointment) {
+      // Lógica de atualização
+      setNewAppointments((prev) =>
+        prev.map((app) => (app.id === editingAppointment.id ? { ...app, ...appointmentData } : app)),
+      )
+      setNotification("Compromisso atualizado com sucesso!")
+    } else {
+      // Lógica de criação
+      const newId = newAppointments.length > 0 ? Math.max(...newAppointments.map((a) => a.id)) + 1 : 1
+      setNewAppointments((prev) => [...prev, { id: newId, ...appointmentData }])
+      setNotification("Compromisso salvo com sucesso!")
+    }
 
+    setShowAppointmentModal(false)
+    setEditingAppointment(null) // Limpar compromisso em edição
     // Limpar campos do formulário
     setNewAppointmentTitle("")
     setNewAppointmentDate("")
@@ -746,7 +878,25 @@ export function DesignaliCreative() {
     setNewAppointmentReminder("")
     setNewAppointmentLocation("")
     setNewAppointmentNotes("")
+
+    setTimeout(() => setNotification(""), 3000)
   }
+
+  // Filtrar compromissos para "Hoje"
+  const today = new Date().toISOString().split("T")[0] // YYYY-MM-DD
+  const appointmentsToday = newAppointments
+    .filter((appointment) => appointment.date === today)
+    .sort((a, b) => a.time.localeCompare(b.time))
+
+  // Filtrar compromissos para "Próximos Dias" (a partir de amanhã)
+  const upcomingAppointments = newAppointments
+    .filter((appointment) => appointment.date > today)
+    .sort((a, b) => {
+      // Ordenar por data e depois por hora
+      const dateA = new Date(`${a.date}T${a.time}`)
+      const dateB = new Date(`${b.date}T${b.time}`)
+      return dateA.getTime() - dateB.getTime()
+    })
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
@@ -2614,11 +2764,21 @@ export function DesignaliCreative() {
                           <h3 className="text-lg font-semibold">Agenda e Compromissos</h3>
                           <button
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
-                            onClick={() => setShowNewAppointmentModal(true)}
+                            onClick={() => openAppointmentModal()} // Abre o modal para novo compromisso
                           >
                             + Novo Compromisso
                           </button>
                         </div>
+
+                        {/* Notificação de sucesso */}
+                        {notification && (
+                          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center justify-between">
+                            <span>{notification}</span>
+                            <button onClick={() => setNotification("")} className="text-green-700 hover:text-green-900">
+                              ✕
+                            </button>
+                          </div>
+                        )}
 
                         {/* Grid: Agenda do Dia + Próximos Compromissos */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -2638,54 +2798,12 @@ export function DesignaliCreative() {
                                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                               </svg>
-                              Hoje - 01/07/2024
+                              Hoje - {new Date().toLocaleDateString("pt-BR")}
                             </h4>
 
                             <div className="space-y-3">
-                              <div
-                                className="flex items-start p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500 cursor-pointer hover:bg-blue-100 transition-colors"
-                                onClick={() => alert("Detalhes do compromisso: Reunião com Maria Silva")}
-                              >
-                                <div className="flex-shrink-0 w-16 text-center">
-                                  <div className="text-sm font-medium text-blue-600">09:00</div>
-                                </div>
-                                <div className="ml-3 flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Reunião com Maria Silva</div>
-                                  <div className="text-xs text-gray-500">Apresentação de propriedades</div>
-                                  <div className="text-xs text-blue-600 mt-1">📍 Escritório Central</div>
-                                </div>
-                              </div>
-
-                              <div
-                                className="flex items-start p-3 bg-green-50 rounded-lg border-l-4 border-green-500 cursor-pointer hover:bg-green-100 transition-colors"
-                                onClick={() => alert("Detalhes do compromisso: Visita - João Santos")}
-                              >
-                                <div className="flex-shrink-0 w-16 text-center">
-                                  <div className="text-sm font-medium text-green-600">14:00</div>
-                                </div>
-                                <div className="ml-3 flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Visita - João Santos</div>
-                                  <div className="text-xs text-gray-500">Casa em Kissimmee</div>
-                                  <div className="text-xs text-green-600 mt-1">📍 1234 Main St, Kissimmee</div>
-                                </div>
-                              </div>
-
-                              <div
-                                className="flex items-start p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500 cursor-pointer hover:bg-yellow-100 transition-colors"
-                                onClick={() => alert("Detalhes do compromisso: Follow-up Carlos Lima")}
-                              >
-                                <div className="flex-shrink-0 w-16 text-center">
-                                  <div className="text-sm font-medium text-yellow-600">16:30</div>
-                                </div>
-                                <div className="ml-3 flex-1">
-                                  <div className="text-sm font-medium text-gray-900">Follow-up Carlos Lima</div>
-                                  <div className="text-xs text-gray-500">Retorno sobre proposta</div>
-                                  <div className="text-xs text-yellow-600 mt-1">📞 Ligação agendada</div>
-                                </div>
-                              </div>
-                              {newAppointments
-                                .filter((appointment) => appointment.date === "2024-07-01")
-                                .map((appointment) => {
+                              {appointmentsToday.length > 0 ? (
+                                appointmentsToday.map((appointment) => {
                                   let bgColor = "bg-gray-50"
                                   let borderColor = "border-gray-500"
                                   let textColor = "text-gray-600"
@@ -2737,7 +2855,6 @@ export function DesignaliCreative() {
                                     <div
                                       key={appointment.id}
                                       className={`flex items-start p-3 ${bgColor} rounded-lg border-l-4 ${borderColor} cursor-pointer hover:${bgColor.replace("-50", "-100")} transition-colors`}
-                                      onClick={() => alert(`Detalhes do compromisso: ${appointment.title}`)}
                                     >
                                       <div className="flex-shrink-0 w-16 text-center">
                                         <div className={`text-sm font-medium ${textColor}`}>{appointment.time}</div>
@@ -2753,9 +2870,20 @@ export function DesignaliCreative() {
                                           📍 {appointment.location || "Local não informado"}
                                         </div>
                                       </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="ml-2 h-8 w-8"
+                                        onClick={() => openAppointmentModal(appointment)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
                                     </div>
                                   )
-                                })}
+                                })
+                              ) : (
+                                <p className="text-sm text-gray-500">Nenhum compromisso para hoje.</p>
+                              )}
                             </div>
                           </div>
 
@@ -2779,57 +2907,101 @@ export function DesignaliCreative() {
                             </h4>
 
                             <div className="space-y-3">
-                              <div
-                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onClick={() => alert("Detalhes do compromisso: Visita - Ana Costa")}
-                              >
-                                <div className="flex items-center">
-                                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-                                    <span className="text-xs font-medium text-purple-600">02</span>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm font-medium text-gray-900">Visita - Ana Costa</div>
-                                    <div className="text-xs text-gray-500">02/07/2024 às 10:00</div>
-                                  </div>
-                                </div>
-                                <span className="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800">
-                                  Amanhã
-                                </span>
-                              </div>
+                              {upcomingAppointments.length > 0 ? (
+                                upcomingAppointments.map((appointment) => {
+                                  const appointmentDate = new Date(appointment.date)
+                                  const todayDate = new Date()
+                                  const tomorrowDate = new Date()
+                                  tomorrowDate.setDate(todayDate.getDate() + 1)
 
-                              <div
-                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onClick={() => alert("Detalhes do compromisso: Reunião Equipe")}
-                              >
-                                <div className="flex items-center">
-                                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                                    <span className="text-xs font-medium text-blue-600">03</span>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm font-medium text-gray-900">Reunião Equipe</div>
-                                    <div className="text-xs text-gray-500">03/07/2024 às 09:00</div>
-                                  </div>
-                                </div>
-                                <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">Quarta</span>
-                              </div>
+                                  let dateLabel = appointmentDate.toLocaleDateString("pt-BR")
+                                  if (appointmentDate.toDateString() === tomorrowDate.toDateString()) {
+                                    dateLabel = "Amanhã"
+                                  } else if (
+                                    appointmentDate.getDay() === todayDate.getDay() + 2 ||
+                                    appointmentDate.getDay() === todayDate.getDay() - 5
+                                  ) {
+                                    // Check for day after tomorrow
+                                    const days = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+                                    dateLabel = days[appointmentDate.getDay()]
+                                  }
 
-                              <div
-                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onClick={() => alert("Detalhes do compromisso: Apresentação Lucia")}
-                              >
-                                <div className="flex items-center">
-                                  <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
-                                    <span className="text-xs font-medium text-orange-600">05</span>
-                                  </div>
-                                  <div>
-                                    <div className="text-sm font-medium text-gray-900">Apresentação Lucia</div>
-                                    <div className="text-xs text-gray-500">05/07/2024 às 15:00</div>
-                                  </div>
-                                </div>
-                                <span className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-800">
-                                  Sexta
-                                </span>
-                              </div>
+                                  let bgColor = "bg-gray-50"
+                                  let textColor = "text-gray-600"
+                                  let badgeColor = "bg-gray-100 text-gray-800"
+
+                                  switch (appointment.type) {
+                                    case "reuniao":
+                                      bgColor = "bg-blue-50"
+                                      textColor = "text-blue-600"
+                                      badgeColor = "bg-blue-100 text-blue-800"
+                                      break
+                                    case "visita":
+                                      bgColor = "bg-green-50"
+                                      textColor = "text-green-600"
+                                      badgeColor = "bg-green-100 text-green-800"
+                                      break
+                                    case "ligacao":
+                                      bgColor = "bg-yellow-50"
+                                      textColor = "text-yellow-600"
+                                      badgeColor = "bg-yellow-100 text-yellow-800"
+                                      break
+                                    case "followup":
+                                      bgColor = "bg-orange-50"
+                                      textColor = "text-orange-600"
+                                      badgeColor = "bg-orange-100 text-orange-800"
+                                      break
+                                    case "apresentacao":
+                                      bgColor = "bg-purple-50"
+                                      textColor = "text-purple-600"
+                                      badgeColor = "bg-purple-100 text-purple-800"
+                                      break
+                                    case "negociacao":
+                                      bgColor = "bg-red-50"
+                                      textColor = "text-red-600"
+                                      badgeColor = "bg-red-100 text-red-800"
+                                      break
+                                  }
+
+                                  return (
+                                    <div
+                                      key={appointment.id}
+                                      className={`flex items-center justify-between p-3 ${bgColor} rounded-lg cursor-pointer hover:${bgColor.replace("-50", "-100")} transition-colors`}
+                                    >
+                                      <div className="flex items-center">
+                                        <div
+                                          className={`mr-3 flex h-10 w-10 items-center justify-center rounded-full ${bgColor.replace("-50", "-100")}`}
+                                        >
+                                          <span className={`text-xs font-medium ${textColor}`}>
+                                            {appointmentDate.getDate().toString().padStart(2, "0")}
+                                          </span>
+                                        </div>
+                                        <div>
+                                          <div className="text-sm font-medium text-gray-900">{appointment.title}</div>
+                                          <div className="text-xs text-gray-500">
+                                            {appointmentDate.toLocaleDateString("pt-BR")} às {appointment.time}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className={`rounded-full px-2 py-1 text-xs ${badgeColor}`}>
+                                          {dateLabel}
+                                        </span>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="ml-2 h-8 w-8"
+                                          onClick={() => openAppointmentModal(appointment)}
+                                        >
+                                          <Edit className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )
+                                })
+                              ) : (
+                                <p className="text-sm text-gray-500">Nenhum compromisso para os próximos dias.</p>
+                              )}
                             </div>
                           </div>
 
@@ -3640,16 +3812,18 @@ Seu Corretor`}
         </div>
       )}
 
-      {/* Modal Novo Compromisso */}
-      {showNewAppointmentModal && (
+      {/* Modal Novo/Editar Compromisso */}
+      {showAppointmentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="mx-4 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-xl font-semibold">Novo Compromisso</h3>
+              <h3 className="text-xl font-semibold">
+                {editingAppointment ? "Editar Compromisso" : "Novo Compromisso"}
+              </h3>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setShowNewAppointmentModal(false)}
+                onClick={() => setShowAppointmentModal(false)}
                 className="rounded-full"
               >
                 <X className="h-4 w-4" />
@@ -3667,6 +3841,7 @@ Seu Corretor`}
                     placeholder="Ex: Reunião com Cliente"
                     value={newAppointmentTitle}
                     onChange={(e) => setNewAppointmentTitle(e.target.value)}
+                    required
                   />
                 </div>
                 <div>
@@ -3696,6 +3871,7 @@ Seu Corretor`}
                     className="rounded-xl"
                     value={newAppointmentDate}
                     onChange={(e) => setNewAppointmentDate(e.target.value)}
+                    required
                   />
                 </div>
                 <div>
@@ -3705,6 +3881,7 @@ Seu Corretor`}
                     className="rounded-xl"
                     value={newAppointmentTime}
                     onChange={(e) => setNewAppointmentTime(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -3772,12 +3949,12 @@ Seu Corretor`}
               <Button
                 variant="outline"
                 className="flex-1 rounded-xl bg-transparent"
-                onClick={() => setShowNewAppointmentModal(false)}
+                onClick={() => setShowAppointmentModal(false)}
               >
                 Cancelar
               </Button>
-              <Button className="flex-1 rounded-xl" onClick={handleSaveAppointment}>
-                Salvar Compromisso
+              <Button className="flex-1 rounded-xl" onClick={handleSaveOrUpdateAppointment}>
+                {editingAppointment ? "Salvar Alterações" : "Salvar Compromisso"}
               </Button>
             </div>
           </div>
