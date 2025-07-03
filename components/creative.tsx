@@ -1999,38 +1999,40 @@ export function DesignaliCreative() {
                         </div>
 
                         {/* Leads Table */}
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
+                        <div>
+                          {" "}
+                          {/* REMOVED overflow-x-auto HERE */}
+                          <table className="w-full min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                               <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[15%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Nome
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[15%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Email
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Telefone
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Fonte
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Tipo de Interesse
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   QUALIFICAÇÃO
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[12%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Orçamento
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[10%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Status
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="w-[4%] px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Data
                                 </th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-2 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                   Ações
                                 </th>
                               </tr>
@@ -2038,16 +2040,16 @@ export function DesignaliCreative() {
                             <tbody className="bg-white divide-y divide-gray-200">
                               {filteredLeads.map((lead) => (
                                 <tr key={lead.id} className="hover:bg-gray-50">
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {lead.nome}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.email}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.telefone}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.fonte}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.email}</td>
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.telefone}</td>
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.fonte}</td>
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {lead.tipoInteresse}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
+                                  <td className="px-2 py-4 whitespace-nowrap">
                                     <span
                                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                                         lead.temperatura === "Quente"
@@ -2068,13 +2070,13 @@ export function DesignaliCreative() {
                                             : "Não definido"}
                                     </span>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {lead.orcamento.toLocaleString("pt-BR", {
                                       style: "currency",
                                       currency: "BRL",
                                     })}
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
+                                  <td className="px-2 py-4 whitespace-nowrap">
                                     <select
                                       value={lead.status}
                                       onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
@@ -2100,8 +2102,8 @@ export function DesignaliCreative() {
                                       <option value="Descartado">Descartado</option>
                                     </select>
                                   </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.data}</td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                  <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">{lead.data}</td>
+                                  <td className="px-2 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex justify-end gap-2">
                                       <button
                                         onClick={() => handleViewLead(lead)}
