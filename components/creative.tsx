@@ -2063,9 +2063,7 @@ export function DesignaliCreative() {
                                         ? "🔥 Quente"
                                         : lead.temperatura === "Morno"
                                           ? "🌡️ Morno"
-                                          : lead.temperatura === "Frio"
-                                            ? "❄️ Frio"
-                                            : "Não definido"}
+                                          : "❄️ Frio"}
                                     </span>
                                   </td>
                                   <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -2804,9 +2802,7 @@ export function DesignaliCreative() {
                           ? "🔥 Quente"
                           : selectedLead.temperatura === "Morno"
                             ? "🌡️ Morno"
-                            : selectedLead.temperatura === "Frio"
-                              ? "❄️ Frio"
-                              : "Não definido"}
+                            : "❄️ Frio"}
                       </span>
                     </p>
                   </div>
@@ -3128,26 +3124,22 @@ export function DesignaliCreative() {
                   <div className="flex justify-between items-center">
                     <span>Propostas:</span>
                     <div className="flex items-center gap-2">
-                      <div className="w-32 h-3 bg-gray-200 rounded-full">
-                        <div
-                          className="h-3 bg-yellow-500 rounded-full"
-                          style={{
-                            width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
-                          }}
-                        ></div>
-                      </div>
+                      <div
+                        className="w-32 h-3 bg-gray-200 rounded-full"
+                        style={{
+                          width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
+                        }}
+                      ></div>
                       <span className="font-medium">{reportData.leadsPorStatus.proposta}</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Fechados:</span>
                     <div className="flex items-center gap-2">
-                      <div className="w-32 h-3 bg-gray-200 rounded-full">
-                        <div
-                          className="h-3 bg-emerald-500 rounded-full"
-                          style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
-                        ></div>
-                      </div>
+                      <div
+                        className="h-3 bg-emerald-500 rounded-full"
+                        style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
+                      ></div>
                       <span className="font-medium">{reportData.leadsPorStatus.fechado}</span>
                     </div>
                   </div>
