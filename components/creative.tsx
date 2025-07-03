@@ -57,6 +57,7 @@ import RoiToolInterface from "@/components/roi-tool-interface"
 import { StarBorder } from "@/components/ui/star-border"
 import { CRMDashboard } from "@/components/crm/CRMDashboard" // Import the new component
 import { LeadsTable } from "@/components/crm/LeadsTable" // Import the new LeadsTable component
+import { PipelineView } from "@/components/crm/PipelineView" // Import the new PipelineView component
 
 // Definir interface para Compromisso
 interface Appointment {
@@ -69,6 +70,21 @@ interface Appointment {
   reminder: string
   location: string
   notes: string
+}
+
+// Definir interface para Lead
+interface Lead {
+  id: number
+  nome: string
+  email: string
+  telefone: string
+  fonte: string
+  tipoInteresse: string
+  orcamento: number
+  status: string
+  temperatura: string
+  data: string
+  observacoes?: string
 }
 
 // Sample data for apps
@@ -523,7 +539,7 @@ export function DesignaliCreative() {
     },
   ])
 
-  const [leadsList, setLeadsList] = useState([
+  const [leadsList, setLeadsList] = useState<Lead[]>([
     {
       id: 1,
       nome: "Maria Silva",
@@ -598,9 +614,6 @@ export function DesignaliCreative() {
     orcamento: "",
     observacoes: "",
   })
-
-  const [draggedLead, setDraggedLead] = useState(null)
-  const [dragOverColumn, setDragOverColumn] = useState("")
 
   // Função para gerar dados do relatório
   const generateReportData = () => {
@@ -716,26 +729,6 @@ export function DesignaliCreative() {
     }))
   }
 
-  const handleDragStart = (e, lead) => {
-    setDraggedLead(lead)
-    e.dataTransfer.effectAllowed = "move"
-  }
-
-  const handleDragOver = (e, columnStatus) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-    setDragOverColumn(columnStatus)
-  }
-
-  const handleDrop = (e, newStatus) => {
-    e.preventDefault()
-    if (draggedLead && draggedLead.status !== newStatus) {
-      updateLeadStatus(draggedLead.id, newStatus)
-    }
-    setDraggedLead(null)
-    setDragOverColumn("")
-  }
-
   const toggleTaskCompletion = (taskIndex: number) => {
     setCompletedTasks((prev) => {
       if (prev.includes(taskIndex)) {
@@ -825,11 +818,6 @@ export function DesignaliCreative() {
       const dateB = new Date(`${b.date}T${b.time}`)
       return dateA.getTime() - dateB.getTime()
     })
-
-  const handleDragLeave = (e) => {
-    e.preventDefault()
-    setDragOverColumn("")
-  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
@@ -1761,299 +1749,7 @@ export function DesignaliCreative() {
                     )}
 
                     {activeCrmTab === "pipeline" && (
-                      <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                          <h3 className="text-lg font-semibold">Pipeline de Vendas Visual</h3>
-                          <div className="text-sm text-gray-500">
-                            Total:{" "}
-                            <span className="font-medium">
-                              $
-                              {leadsList
-                                .filter(
-                                  (l) =>
-                                    l.status === "Qualificado" || l.status === "Proposta" || l.status === "Negociação",
-                                )
-                                .reduce((sum, lead) => sum + lead.orcamento, 0)
-                                .toLocaleString()}
-                            </span>{" "}
-                            em negociações
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                          <div
-                            className={`bg-gray-50 rounded-lg p-4 ${dragOverColumn === "Novo" ? "bg-gray-100" : ""}`}
-                            onDragOver={(e) => handleDragOver(e, "Novo")}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, "Novo")}
-                          >
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-medium text-gray-900">Novos</h4>
-                              <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                                {leadsList.filter((l) => l.status === "Novo").length}
-                              </span>
-                            </div>
-                            <div className="space-y-3">
-                              {leadsList
-                                .filter((l) => l.status === "Novo")
-                                .map((lead) => (
-                                  <div
-                                    key={lead.id}
-                                    onClick={() => {
-                                      /* handleViewLead(lead) */
-                                    }} // Removed direct call, now handled by LeadsTable
-                                    draggable="true"
-                                    onDragStart={(e) => handleDragStart(e, lead)}
-                                    className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                                  >
-                                    <div className="mb-2 flex items-center">
-                                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
-                                        {lead.nome.charAt(0).toUpperCase()}
-                                        {lead.nome.split(" ").length > 1
-                                          ? lead.nome.split(" ")[1].charAt(0).toUpperCase()
-                                          : ""}
-                                      </span>
-                                      <span className="text-sm font-medium">{lead.nome}</span>
-                                    </div>
-                                    <p className="mb-2 text-xs text-gray-500">{lead.tipoInteresse}</p>
-                                    <p className="text-sm font-semibold text-green-600">
-                                      {lead.orcamento.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                      })}
-                                    </p>
-                                    {lead.observacoes && (
-                                      <div className="mt-2 text-xs text-gray-600">{lead.observacoes}</div>
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-
-                          <div
-                            className={`bg-blue-50 rounded-lg p-4 ${
-                              dragOverColumn === "Qualificado" ? "bg-blue-100" : ""
-                            }`}
-                            onDragOver={(e) => handleDragOver(e, "Qualificado")}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, "Qualificado")}
-                          >
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-medium text-blue-900">Qualificados</h4>
-                              <span className="bg-blue-200 text-blue-700 text-xs px-2 py-1 rounded-full">
-                                {leadsList.filter((l) => l.status === "Qualificado").length}
-                              </span>
-                            </div>
-                            <div className="space-y-3">
-                              {leadsList
-                                .filter((l) => l.status === "Qualificado")
-                                .map((lead) => (
-                                  <div
-                                    key={lead.id}
-                                    onClick={() => {
-                                      /* handleViewLead(lead) */
-                                    }} // Removed direct call, now handled by LeadsTable
-                                    draggable="true"
-                                    onDragStart={(e) => handleDragStart(e, lead)}
-                                    className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                                  >
-                                    <div className="mb-2 flex items-center">
-                                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-600">
-                                        {lead.nome.charAt(0).toUpperCase()}
-                                        {lead.nome.split(" ").length > 1
-                                          ? lead.nome.split(" ")[1].charAt(0).toUpperCase()
-                                          : ""}
-                                      </span>
-                                      <span className="text-sm font-medium">{lead.nome}</span>
-                                    </div>
-                                    <p className="mb-2 text-xs text-gray-500">{lead.tipoInteresse}</p>
-                                    <p className="text-sm font-semibold text-green-600">
-                                      {lead.orcamento.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                      })}
-                                    </p>
-                                    {lead.observacoes && (
-                                      <div className="mt-2 text-xs text-blue-600">{lead.observacoes}</div>
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-
-                          <div
-                            className={`bg-yellow-50 rounded-lg p-4 ${
-                              dragOverColumn === "Proposta" ? "bg-yellow-100" : ""
-                            }`}
-                            onDragOver={(e) => handleDragOver(e, "Proposta")}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, "Proposta")}
-                          >
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-medium text-yellow-900">Proposta</h4>
-                              <span className="bg-yellow-200 text-yellow-700 text-xs px-2 py-1 rounded-full">
-                                {leadsList.filter((l) => l.status === "Proposta").length}
-                              </span>
-                            </div>
-                            <div className="space-y-3">
-                              {leadsList
-                                .filter((l) => l.status === "Proposta")
-                                .map((lead) => (
-                                  <div
-                                    key={lead.id}
-                                    onClick={() => {
-                                      /* handleViewLead(lead) */
-                                    }} // Removed direct call, now handled by LeadsTable
-                                    draggable="true"
-                                    onDragStart={(e) => handleDragStart(e, lead)}
-                                    className="bg-white p-3 rounded-lg border border-yellow-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                                  >
-                                    <div className="mb-2 flex items-center">
-                                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs font-medium text-green-600">
-                                        {lead.nome.charAt(0).toUpperCase()}
-                                        {lead.nome.split(" ").length > 1
-                                          ? lead.nome.split(" ")[1].charAt(0).toUpperCase()
-                                          : ""}
-                                      </span>
-                                      <span className="text-sm font-medium">{lead.nome}</span>
-                                    </div>
-                                    <p className="mb-2 text-xs text-gray-500">{lead.tipoInteresse}</p>
-                                    <p className="text-sm font-semibold text-green-600">
-                                      {lead.orcamento.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                      })}
-                                    </p>
-                                    {lead.observacoes && (
-                                      <div className="mt-2 text-xs text-yellow-600">{lead.observacoes}</div>
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-
-                          <div
-                            className={`bg-orange-50 rounded-lg p-4 ${
-                              dragOverColumn === "Negociação" ? "bg-orange-100" : ""
-                            }`}
-                            onDragOver={(e) => handleDragOver(e, "Negociação")}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, "Negociação")}
-                          >
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-medium text-orange-900">Negociação</h4>
-                              <span className="bg-orange-200 text-orange-700 text-xs px-2 py-1 rounded-full">
-                                {leadsList.filter((l) => l.status === "Negociação").length}
-                              </span>
-                            </div>
-                            <div className="space-y-3">
-                              {leadsList
-                                .filter((l) => l.status === "Negociação")
-                                .map((lead) => (
-                                  <div
-                                    key={lead.id}
-                                    onClick={() => {
-                                      /* handleViewLead(lead) */
-                                    }} // Removed direct call, now handled by LeadsTable
-                                    draggable="true"
-                                    onDragStart={(e) => handleDragStart(e, lead)}
-                                    className="bg-white p-3 rounded-lg border border-orange-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                                  >
-                                    <div className="mb-2 flex items-center">
-                                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-medium text-purple-600">
-                                        {lead.nome.charAt(0).toUpperCase()}
-                                        {lead.nome.split(" ").length > 1
-                                          ? lead.nome.split(" ")[1].charAt(0).toUpperCase()
-                                          : ""}
-                                      </span>
-                                      <span className="text-sm font-medium">{lead.nome}</span>
-                                    </div>
-                                    <p className="mb-2 text-xs text-gray-500">{lead.tipoInteresse}</p>
-                                    <p className="text-sm font-semibold text-green-600">
-                                      {lead.orcamento.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                      })}
-                                    </p>
-                                    {lead.observacoes && (
-                                      <div className="mt-2 text-xs text-orange-600">{lead.observacoes}</div>
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-
-                          <div
-                            className={`bg-green-50 rounded-lg p-4 ${
-                              dragOverColumn === "Fechado" ? "bg-green-100" : ""
-                            }`}
-                            onDragOver={(e) => handleDragOver(e, "Fechado")}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, "Fechado")}
-                          >
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="font-medium text-green-900">Fechado</h4>
-                              <span className="bg-green-200 text-green-700 text-xs px-2 py-1 rounded-full">
-                                {leadsList.filter((l) => l.status === "Fechado").length}
-                              </span>
-                            </div>
-                            <div className="space-y-3">
-                              {leadsList
-                                .filter((l) => l.status === "Fechado")
-                                .map((lead) => (
-                                  <div
-                                    key={lead.id}
-                                    onClick={() => {
-                                      /* handleViewLead(lead) */
-                                    }} // Removed direct call, now handled by LeadsTable
-                                    draggable="true"
-                                    onDragStart={(e) => handleDragStart(e, lead)}
-                                    className="bg-white p-3 rounded-lg border border-green-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                                  >
-                                    <div className="mb-2 flex items-center">
-                                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-100 text-xs font-medium text-purple-600">
-                                        {lead.nome.charAt(0).toUpperCase()}
-                                        {lead.nome.split(" ").length > 1
-                                          ? lead.nome.split(" ")[1].charAt(0).toUpperCase()
-                                          : ""}
-                                      </span>
-                                      <span className="text-sm font-medium">{lead.nome}</span>
-                                    </div>
-                                    <p className="mb-2 text-xs text-gray-500">{lead.tipoInteresse}</p>
-                                    <p className="text-sm font-semibold text-green-600">
-                                      {lead.orcamento.toLocaleString("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                      })}
-                                    </p>
-                                    {lead.observacoes && (
-                                      <div className="mt-2 text-xs text-green-600">{lead.observacoes}</div>
-                                    )}
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-                          <div className="bg-white p-4 rounded-lg border border-gray-200">
-                            <div className="text-sm text-gray-500">Taxa de Conversão</div>
-                            <div className="text-2xl font-bold text-green-600">20%</div>
-                          </div>
-                          <div className="bg-white p-4 rounded-lg border border-gray-200">
-                            <div className="text-sm text-gray-500">Tempo Médio</div>
-                            <div className="text-2xl font-bold text-blue-600">15 dias</div>
-                          </div>
-                          <div className="bg-white p-4 rounded-lg border border-gray-200">
-                            <div className="text-sm text-gray-500">Ticket Médio</div>
-                            <div className="text-2xl font-bold text-purple-600">$390K</div>
-                          </div>
-                          <div className="bg-white p-4 rounded-lg border border-gray-200">
-                            <div className="text-sm text-gray-500">Meta Mensal</div>
-                            <div className="text-2xl font-bold text-orange-600">$2.5M</div>
-                          </div>
-                        </div>
-                      </div>
+                      <PipelineView leadsList={leadsList} updateLeadStatus={updateLeadStatus} />
                     )}
 
                     {activeCrmTab === "agenda" && (
