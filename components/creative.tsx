@@ -429,6 +429,10 @@ export function DesignaliCreative() {
   const [showReportModal, setShowReportModal] = useState(false) // Novo estado para o modal de relatório
   // Add state for the temperature filter
   const [temperaturaFilter, setTemperaturaFilter] = useState("")
+  const [newAppointmentTitle, setNewAppointmentTitle] = useState("")
+  const [newAppointmentDate, setNewAppointmentDate] = useState("")
+  const [newAppointmentTime, setNewAppointmentTime] = useState("")
+  const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false)
 
   const [leadsList, setLeadsList] = useState([
     {
@@ -2534,7 +2538,10 @@ export function DesignaliCreative() {
                         {/* Header da Agenda */}
                         <div className="flex justify-between items-center">
                           <h3 className="text-lg font-semibold">Agenda e Compromissos</h3>
-                          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+                          <button
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+                            onClick={() => setShowNewAppointmentModal(true)}
+                          >
                             + Novo Compromisso
                           </button>
                         </div>
@@ -2952,7 +2959,7 @@ export function DesignaliCreative() {
                             ? "🌡️ Morno"
                             : selectedLead.temperatura === "Frio"
                               ? "❄️ Frio"
-                              : "Não definido"}
+                              : "bg-gray-100 text-gray-800"}
                       </span>
                     </p>
                   </div>
@@ -3412,6 +3419,78 @@ Seu Corretor`}
                 </div>
               )
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Novo Compromisso */}
+      {showNewAppointmentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-xl font-semibold">Novo Compromisso</h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowNewAppointmentModal(false)}
+                className="rounded-full"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium">Título do compromisso</label>
+                <Input
+                  type="text"
+                  className="rounded-xl"
+                  placeholder="Ex: Reunião com Cliente"
+                  value={newAppointmentTitle}
+                  onChange={(e) => setNewAppointmentTitle(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Data</label>
+                <Input
+                  type="date"
+                  className="rounded-xl"
+                  value={newAppointmentDate}
+                  onChange={(e) => setNewAppointmentDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Horário</label>
+                <Input
+                  type="time"
+                  className="rounded-xl"
+                  value={newAppointmentTime}
+                  onChange={(e) => setNewAppointmentTime(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-xl bg-transparent"
+                onClick={() => setShowNewAppointmentModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 rounded-xl"
+                onClick={() => {
+                  alert("Compromisso salvo com sucesso!")
+                  setShowNewAppointmentModal(false)
+                  setNewAppointmentTitle("")
+                  setNewAppointmentDate("")
+                  setNewAppointmentTime("")
+                }}
+              >
+                Salvar
+              </Button>
+            </div>
           </div>
         </div>
       )}
