@@ -26,15 +26,10 @@ import {
   Gauge,
   BarChart3,
   LayoutGrid,
-  Star,
-  Users,
-  Heart,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -396,6 +391,18 @@ const communityPosts = [
 
 export function DesignaliCreative() {
   const [notification, setNotification] = useState("")
+  const [greetingPrefix, setGreetingPrefix] = useState("")
+
+  useEffect(() => {
+    const currentHour = new Date().getHours()
+    if (currentHour >= 5 && currentHour < 12) {
+      setGreetingPrefix("Bom dia")
+    } else if (currentHour >= 12 && currentHour < 18) {
+      setGreetingPrefix("Boa tarde")
+    } else {
+      setGreetingPrefix("Boa noite")
+    }
+  }, [])
 
   const [progress, setProgress] = useState(0)
   const [notifications, setNotifications] = useState(5)
@@ -815,13 +822,13 @@ export function DesignaliCreative() {
                 <TabsContent value="home" className="space-y-8 mt-0">
                   <section>
                     <motion.div
-                      className="relative overflow-hidden rounded-3xl px-8 py-2 bg-slate-500 opacity-40 text-slate-100"
+                      className="relative overflow-hidden rounded-3xl px-8 bg-slate-500 opacity-40 text-slate-100 py-3.5"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
                     >
                       <div className="relative z-10 max-w-2xl">
-                        <h2 className="text-2xl md:text-4xl font-bold">Bom dia, Corretor!</h2>
+                        <h2 className="text-2xl md:text-4xl font-bold">{greetingPrefix}, Corretor!</h2>
                         <p className="mt-2 text-sm md:text-base text-white/80">
                           Domine o mercado imobiliário de Orlando com nossa suíte de soluções inteligentes para
                           corretores.
@@ -833,17 +840,9 @@ export function DesignaliCreative() {
                     </motion.div>
                   </section>
 
-                  <section className="space-y-4">
-                    
-                    
-                  </section>
+                  <section className="space-y-4"></section>
 
-                  
-
-                  <section className="space-y-4">
-                    
-                    
-                  </section>
+                  <section className="space-y-4"></section>
                 </TabsContent>
 
                 <TabsContent value="apps" className="space-y-8 mt-0">

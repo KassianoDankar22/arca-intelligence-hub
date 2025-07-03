@@ -318,7 +318,7 @@ export function Sidebar({
                                 : "hover:bg-gray-100 text-gray-700"
                             }`}
                           >
-                            <Home className="h-3.5 w-3.5" />
+                            
                             <span>Todos os Agents</span>
                           </button>
 
@@ -331,7 +331,7 @@ export function Sidebar({
                             }`}
                           >
                             <div className="flex items-center gap-3">
-                              <BarChart3 className="h-3.5 w-3.5" />
+                              
                               <span>Meus ROIs</span>
                             </div>
                             {savedROIsCount > 0 && (
@@ -350,7 +350,7 @@ export function Sidebar({
                             }`}
                           >
                             <div className="flex items-center gap-3">
-                              <Star className="h-3.5 w-3.5" />
+                              
                               <span>Favoritos</span>
                             </div>
                             {favoriteAgentsCount > 0 && (
