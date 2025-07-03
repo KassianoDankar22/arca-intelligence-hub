@@ -432,8 +432,14 @@ export function DesignaliCreative() {
   const [newAppointmentTitle, setNewAppointmentTitle] = useState("")
   const [newAppointmentDate, setNewAppointmentDate] = useState("")
   const [newAppointmentTime, setNewAppointmentTime] = useState("")
+  const [newAppointmentType, setNewAppointmentType] = useState("") // NOVO ESTADO
+  const [newAppointmentRelatedLead, setNewAppointmentRelatedLead] = useState("") // NOVO ESTADO
+  const [newAppointmentReminder, setNewAppointmentReminder] = useState("") // NOVO ESTADO
+  const [newAppointmentLocation, setNewAppointmentLocation] = useState("") // NOVO ESTADO
+  const [newAppointmentNotes, setNewAppointmentNotes] = useState("") // NOVO ESTADO
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false)
   const [completedTasks, setCompletedTasks] = useState<number[]>([])
+  const [newAppointments, setNewAppointments] = useState<any[]>([]) // Estado para armazenar os novos compromissos
 
   const [leadsList, setLeadsList] = useState([
     {
@@ -707,6 +713,39 @@ export function DesignaliCreative() {
         return [...prev, taskIndex]
       }
     })
+  }
+
+  const handleSaveAppointment = () => {
+    if (!newAppointmentTitle || !newAppointmentDate || !newAppointmentTime) {
+      alert("Por favor, preencha o título, data e horário do compromisso.")
+      return
+    }
+
+    const newAppointment = {
+      id: newAppointments.length + 1,
+      title: newAppointmentTitle,
+      date: newAppointmentDate,
+      time: newAppointmentTime,
+      type: newAppointmentType,
+      relatedLead: newAppointmentRelatedLead,
+      reminder: newAppointmentReminder,
+      location: newAppointmentLocation,
+      notes: newAppointmentNotes,
+    }
+
+    setNewAppointments((prev) => [...prev, newAppointment])
+    setShowNewAppointmentModal(false)
+    alert("Compromisso salvo com sucesso!")
+
+    // Limpar campos do formulário
+    setNewAppointmentTitle("")
+    setNewAppointmentDate("")
+    setNewAppointmentTime("")
+    setNewAppointmentType("")
+    setNewAppointmentRelatedLead("")
+    setNewAppointmentReminder("")
+    setNewAppointmentLocation("")
+    setNewAppointmentNotes("")
   }
 
   return (
@@ -2620,6 +2659,79 @@ export function DesignaliCreative() {
                                   <div className="text-xs text-yellow-600 mt-1">📞 Ligação agendada</div>
                                 </div>
                               </div>
+                              {newAppointments
+                                .filter((appointment) => appointment.date === "2024-07-01")
+                                .map((appointment) => {
+                                  let bgColor = "bg-gray-50"
+                                  let borderColor = "border-gray-500"
+                                  let textColor = "text-gray-600"
+                                  let typeDescription = ""
+
+                                  switch (appointment.type) {
+                                    case "reuniao":
+                                      bgColor = "bg-blue-50"
+                                      borderColor = "border-blue-500"
+                                      textColor = "text-blue-600"
+                                      typeDescription = "Reunião"
+                                      break
+                                    case "visita":
+                                      bgColor = "bg-green-50"
+                                      borderColor = "border-green-500"
+                                      textColor = "text-green-600"
+                                      typeDescription = "Visita"
+                                      break
+                                    case "ligacao":
+                                      bgColor = "bg-yellow-50"
+                                      borderColor = "border-yellow-500"
+                                      textColor = "text-yellow-600"
+                                      typeDescription = "Ligação"
+                                      break
+                                    case "followup":
+                                      bgColor = "bg-orange-50"
+                                      borderColor = "border-orange-500"
+                                      textColor = "text-orange-600"
+                                      typeDescription = "Follow-up"
+                                      break
+                                    case "apresentacao":
+                                      bgColor = "bg-purple-50"
+                                      borderColor = "border-purple-500"
+                                      textColor = "text-purple-600"
+                                      typeDescription = "Apresentação"
+                                      break
+                                    case "negociacao":
+                                      bgColor = "bg-red-50"
+                                      borderColor = "border-red-500"
+                                      textColor = "text-red-600"
+                                      typeDescription = "Negociação"
+                                      break
+                                    default:
+                                      typeDescription = "Compromisso"
+                                      break
+                                  }
+
+                                  return (
+                                    <div
+                                      key={appointment.id}
+                                      className={`flex items-start p-3 ${bgColor} rounded-lg border-l-4 ${borderColor} cursor-pointer hover:${bgColor.replace("-50", "-100")} transition-colors`}
+                                      onClick={() => alert(`Detalhes do compromisso: ${appointment.title}`)}
+                                    >
+                                      <div className="flex-shrink-0 w-16 text-center">
+                                        <div className={`text-sm font-medium ${textColor}`}>{appointment.time}</div>
+                                      </div>
+                                      <div className="ml-3 flex-1">
+                                        <div className="text-sm font-medium text-gray-900">{appointment.title}</div>
+                                        <div className="text-xs text-gray-500">
+                                          {appointment.relatedLead && appointment.relatedLead !== "sem-lead"
+                                            ? `Com ${appointment.relatedLead} (${typeDescription})`
+                                            : typeDescription}
+                                        </div>
+                                        <div className={`text-xs ${textColor} mt-1`}>
+                                          📍 {appointment.location || "Local não informado"}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
                             </div>
                           </div>
 
@@ -3400,13 +3512,13 @@ Seu Corretor`}
                       <div className="flex justify-between items-center">
                         <span>Qualificados:</span>
                         <div className="flex items-center gap-2">
-                          <div className="w-32 h-3 bg-gray-200 rounded-full">
-                            <div
-                              className="h-3 bg-green-500 rounded-full"
-                              style={{
-                                width: `${(reportData.leadsPorStatus.qualificado / reportData.totalLeads) * 100}%`,
-                              }}
-                            ></div>
+                          <div
+                            className="w-32 h-3 bg-gray-200 rounded-full"
+                            style={{
+                              width: `${(reportData.leadsPorStatus.qualificado / reportData.totalLeads) * 100}%`,
+                            }}
+                          >
+                            <div className="h-3 bg-green-500 rounded-full"></div>
                           </div>
                           <span className="font-medium">{reportData.leadsPorStatus.qualificado}</span>
                         </div>
@@ -3414,13 +3526,13 @@ Seu Corretor`}
                       <div className="flex justify-between items-center">
                         <span>Propostas:</span>
                         <div className="flex items-center gap-2">
-                          <div className="w-32 h-3 bg-gray-200 rounded-full">
-                            <div
-                              className="h-3 bg-yellow-500 rounded-full"
-                              style={{
-                                width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
-                              }}
-                            ></div>
+                          <div
+                            className="w-32 h-3 bg-gray-200 rounded-full"
+                            style={{
+                              width: `${(reportData.leadsPorStatus.proposta / reportData.totalLeads) * 100}%`,
+                            }}
+                          >
+                            <div className="h-3 bg-yellow-500 rounded-full"></div>
                           </div>
                           <span className="font-medium">{reportData.leadsPorStatus.proposta}</span>
                         </div>
@@ -3428,11 +3540,11 @@ Seu Corretor`}
                       <div className="flex justify-between items-center">
                         <span>Fechados:</span>
                         <div className="flex items-center gap-2">
-                          <div className="w-32 h-3 bg-gray-200 rounded-full">
-                            <div
-                              className="h-3 bg-emerald-500 rounded-full"
-                              style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
-                            ></div>
+                          <div
+                            className="w-32 h-3 bg-gray-200 rounded-full"
+                            style={{ width: `${(reportData.leadsPorStatus.fechado / reportData.totalLeads) * 100}%` }}
+                          >
+                            <div className="h-3 bg-emerald-500 rounded-full"></div>
                           </div>
                           <span className="font-medium">{reportData.leadsPorStatus.fechado}</span>
                         </div>
@@ -3535,7 +3647,11 @@ Seu Corretor`}
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium">Tipo de Compromisso</label>
-                  <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newAppointmentType}
+                    onChange={(e) => setNewAppointmentType(e.target.value)}
+                  >
                     <option value="">Selecione o tipo</option>
                     <option value="reuniao">📋 Reunião</option>
                     <option value="visita">🏠 Visita</option>
@@ -3573,19 +3689,27 @@ Seu Corretor`}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="mb-2 block text-sm font-medium">Lead Relacionado</label>
-                  <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newAppointmentRelatedLead}
+                    onChange={(e) => setNewAppointmentRelatedLead(e.target.value)}
+                  >
                     <option value="">Selecione o lead</option>
-                    <option value="maria">👩 Maria Silva</option>
-                    <option value="joao">👨 João Santos</option>
-                    <option value="ana">👩 Ana Costa</option>
-                    <option value="carlos">👨 Carlos Lima</option>
-                    <option value="novo">➕ Novo Lead</option>
+                    {leadsList.map((lead) => (
+                      <option key={lead.id} value={lead.nome}>
+                        {lead.nome}
+                      </option>
+                    ))}
                     <option value="sem-lead">📋 Sem lead específico</option>
                   </select>
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-medium">Lembrete</label>
-                  <select className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newAppointmentReminder}
+                    onChange={(e) => setNewAppointmentReminder(e.target.value)}
+                  >
                     <option value="">Sem lembrete</option>
                     <option value="15min">⏰ 15 minutos antes</option>
                     <option value="30min">⏰ 30 minutos antes</option>
@@ -3602,6 +3726,8 @@ Seu Corretor`}
                   type="text"
                   className="rounded-xl"
                   placeholder="Ex: Escritório Central, 1234 Main St, Kissimmee, ou Videochamada"
+                  value={newAppointmentLocation}
+                  onChange={(e) => setNewAppointmentLocation(e.target.value)}
                 />
               </div>
 
@@ -3612,6 +3738,8 @@ Seu Corretor`}
                   className="w-full resize-none rounded-xl border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   rows={3}
                   placeholder="Informações adicionais sobre o compromisso..."
+                  value={newAppointmentNotes}
+                  onChange={(e) => setNewAppointmentNotes(e.target.value)}
                 />
               </div>
             </div>
@@ -3624,16 +3752,7 @@ Seu Corretor`}
               >
                 Cancelar
               </Button>
-              <Button
-                className="flex-1 rounded-xl"
-                onClick={() => {
-                  alert("Compromisso salvo com sucesso!")
-                  setShowNewAppointmentModal(false)
-                  setNewAppointmentTitle("")
-                  setNewAppointmentDate("")
-                  setNewAppointmentTime("")
-                }}
-              >
+              <Button className="flex-1 rounded-xl" onClick={handleSaveAppointment}>
                 Salvar Compromisso
               </Button>
             </div>
