@@ -1767,7 +1767,7 @@ export function DesignaliCreative() {
                 <TabsContent value="files" className="space-y-8 mt-0 h-full w-full max-w-full">
                   {/* Removed AIAssistantInterface and replaced with a placeholder */}
                   <div className="h-full bg-white flex items-center justify-center">
-                    <p className="text-gray-500 text-lg">Arca AI Assistant</p>
+                    <p className="text-gray-500 text-lg">Arca AI Assistant Loading...</p>
                   </div>
                 </TabsContent>
 
