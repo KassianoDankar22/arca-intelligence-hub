@@ -1465,7 +1465,7 @@ export function DesignaliCreative() {
                                       <Badge variant="outline" className="rounded-xl">
                                         {app.category}
                                       </Badge>
-                                    </div>
+                                  </div>
                                   </CardHeader>
                                   <CardContent className="pb-2">
                                     <CardTitle className="text-lg">{app.name}</CardTitle>
