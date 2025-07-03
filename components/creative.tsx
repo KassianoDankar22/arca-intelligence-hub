@@ -40,12 +40,13 @@ import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BackgroundBeams } from "@/components/ui/background-beams"
 import { StarBorder } from "@/components/ui/star-border"
-import { CRMDashboard } from "@/components/crm/CRMDashboard" // Import the new component
-import { LeadsTable } from "@/components/crm/LeadsTable" // Import the new LeadsTable component
-import { PipelineView } from "@/components/crm/PipelineView" // Import the new PipelineView component
-import { AgendaManager } from "@/components/crm/AgendaManager" // Import the new AgendaManager component
-import { Sidebar } from "@/components/layout/Sidebar" // Import the new Sidebar component
-import { AgentsHub } from "@/components/agents/AgentsHub" // Import the new AgentsHub component
+import { CRMDashboard } from "@/components/crm/CRMDashboard"
+import { LeadsTable } from "@/components/crm/LeadsTable"
+import { PipelineView } from "@/components/crm/PipelineView"
+import { AgendaManager } from "@/components/crm/AgendaManager"
+import { Sidebar } from "@/components/layout/Sidebar"
+import { AgentsHub } from "@/components/agents/AgentsHub"
+import { FinancialDashboard } from "@/components/financial/FinancialDashboard" // Import the new FinancialDashboard component
 
 // Definir interface para Compromisso
 interface Appointment {
@@ -408,6 +409,10 @@ export function DesignaliCreative() {
   const [showNewLeadModal, setShowNewLeadModal] = useState(false)
   const [activeCrmTab, setActiveCrmTab] = useState("dashboard")
   const [showReportModal, setShowReportModal] = useState(false)
+
+  // New states for Financial module
+  const [activeFinancialTab, setActiveFinancialTab] = useState("overview")
+  const [showNewTransactionModal, setShowNewTransactionModal] = useState(false)
 
   const [newAppointments, setNewAppointments] = useState<Appointment[]>([
     {
@@ -772,7 +777,7 @@ export function DesignaliCreative() {
             className="w-full"
           >
             <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <TabsList className="grid w-full max-w-[600px] grid-cols-4 rounded-2xl p-1 text-slate-500">
+              <TabsList className="grid w-full max-w-[800px] grid-cols-5 rounded-2xl p-1 text-slate-500">
                 <TabsTrigger value="home" className="rounded-xl data-[state=active]:rounded-xl">
                   Home
                 </TabsTrigger>
@@ -784,6 +789,9 @@ export function DesignaliCreative() {
                 </TabsTrigger>
                 <TabsTrigger value="learn" className="rounded-xl data-[state=active]:rounded-xl">
                   CRM
+                </TabsTrigger>
+                <TabsTrigger value="financeiro" className="rounded-xl data-[state=active]:rounded-xl">
+                  Financeiro
                 </TabsTrigger>
               </TabsList>
               <div className="hidden md:flex gap-2">
@@ -1422,6 +1430,14 @@ export function DesignaliCreative() {
                       </div>
                     )}
                   </div>
+                </TabsContent>
+                <TabsContent value="financeiro" className="space-y-8 mt-0">
+                  <FinancialDashboard
+                    activeFinancialTab={activeFinancialTab}
+                    setActiveFinancialTab={setActiveFinancialTab}
+                    showNewTransactionModal={showNewTransactionModal}
+                    setShowNewTransactionModal={setShowNewTransactionModal}
+                  />
                 </TabsContent>
               </motion.div>
             </AnimatePresence>
