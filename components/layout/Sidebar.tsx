@@ -13,7 +13,6 @@ import {
   BarChart3,
   DollarSign,
   HelpCircle,
-  Activity,
 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -54,7 +53,7 @@ export function Sidebar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAgentsOpen, setIsAgentsOpen] = useState(true)
 
-  // Sample data for sidebar navigation
+  // Sample data for sidebar navigation - removed "Uso e Limites" item
   const sidebarItems = [
     {
       title: "Home",
@@ -85,10 +84,7 @@ export function Sidebar({
       title: "Suporte",
       icon: <HelpCircle className="h-5 w-5" />,
     },
-    {
-      title: "Uso e Limites",
-      icon: <Activity className="h-5 w-5" />,
-    },
+    // Removed "Uso e Limites" item from here
   ]
 
   const handleNavigateToAgentView = (view: "agents" | "my-rois" | "favorites") => {

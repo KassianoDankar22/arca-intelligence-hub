@@ -1,11 +1,10 @@
 "use client"
 
-import type React from "react"
-
-import { type Variants, motion, useAnimation } from "framer-motion"
+import React from "react"
 import type { HTMLAttributes } from "react"
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react"
 import { cn } from "@/lib/utils"
+import { type Variants, motion, useAnimation } from "framer-motion"
 
 export interface ChartColumnIncreasingIconHandle {
   startAnimation: () => void
@@ -80,6 +79,7 @@ const ChartColumnIncreasingIcon = forwardRef<ChartColumnIncreasingIconHandle, Ch
     return (
       <div className={cn(className)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
         <svg
+          {...props}
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -92,8 +92,8 @@ const ChartColumnIncreasingIcon = forwardRef<ChartColumnIncreasingIconHandle, Ch
         >
           <motion.path variants={lineVariants} initial="visible" animate={controls} custom={1} d="M13 17V9" />
           <motion.path variants={lineVariants} initial="visible" animate={controls} custom={2} d="M18 17V5" />
-          <path d="M3 3v16a2 2 0 0 0 2 2h16" />
           <motion.path variants={lineVariants} initial="visible" animate={controls} custom={0} d="M8 17v-3" />
+          <path d="M3 3v18h18" />
         </svg>
       </div>
     )

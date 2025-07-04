@@ -1,25 +1,8 @@
 import type { Config } from "tailwindcss"
-const flattenColorPalette = require("tailwindcss/lib/util/flattenColorPalette")
 
-// Função para adicionar variáveis CSS para todas as cores do Tailwind
-function addVariablesForColors({ addBase, theme }: any) {
-  const allColors = flattenColorPalette(theme("colors"))
-  const newVars = Object.fromEntries(Object.entries(allColors).map(([key, val]) => [`--${key}`, val]))
-
-  addBase({
-    ":root": newVars,
-  })
-}
-
-const config: Config = {
+const config = {
   darkMode: ["class"],
-  content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-    "*.{js,ts,jsx,tsx,mdx}",
-  ],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}", "*.{js,ts,jsx,tsx,mdx}"],
   prefix: "",
   theme: {
     container: {
@@ -31,7 +14,6 @@ const config: Config = {
     },
     extend: {
       colors: {
-        // As cores base do shadcn/ui e Tailwind
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -45,10 +27,6 @@ const config: Config = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -56,6 +34,10 @@ const config: Config = {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -65,14 +47,6 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // As cores da paleta Tailwind (blue, indigo, violet, etc.) são herdadas
-        // e estarão disponíveis como var(--blue-500), etc., devido ao plugin addVariablesForColors
-        "color-1": "hsl(var(--color-1))",
-        "color-2": "hsl(var(--color-2))",
-        "color-3": "hsl(var(--color-3))",
-        "color-4": "hsl(var(--color-4))",
-        "color-5": "hsl(var(--color-5))",
-        "switch-active": "hsl(var(--switch-active))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -89,34 +63,28 @@ const config: Config = {
           to: { height: "0" },
         },
         aurora: {
-          // ✅ Animação correta
-          from: { backgroundPosition: "50% 50%, 50% 50%" },
-          to: { backgroundPosition: "350% 50%, 350% 50%" },
+          from: {
+            backgroundPosition: "50% 50%, 50% 50%",
+          },
+          to: {
+            backgroundPosition: "350% 50%, 350% 50%",
+          },
         },
-        rainbow: {
-          "0%": { "background-position": "0%" },
-          "100%": { "background-position": "200%" },
-        },
-        "star-movement-bottom": {
-          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
-          "100%": { transform: "translate(-100%, 0%)", opacity: "0" },
-        },
-        "star-movement-top": {
-          "0%": { transform: "translate(0%, 0%)", opacity: "1" },
-          "100%": { transform: "translate(100%, 0%)", opacity: "0" },
+        "star-pulse": {
+          "0%": { opacity: "0" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        aurora: "aurora 60s linear infinite", // ✅ Animação correta
-        rainbow: "rainbow var(--speed, 2s) infinite linear",
-        "star-movement-bottom": "star-movement-bottom linear infinite alternate",
-        "star-movement-top": "star-movement-top linear infinite alternate",
+        aurora: "aurora 60s linear infinite",
+        "star-pulse": "star-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), addVariablesForColors], // ✅ Plugin essencial
-}
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config
 
 export default config

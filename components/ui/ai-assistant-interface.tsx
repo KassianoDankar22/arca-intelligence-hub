@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
-import { Mic, ArrowUp, Plus, FileText, ChevronLeft } from "lucide-react"
+import { Mic, ArrowUp, Plus, FileText, ChevronLeft } from 'lucide-react'
 import { motion } from "framer-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"

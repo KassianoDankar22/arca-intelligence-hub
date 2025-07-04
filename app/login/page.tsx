@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState, type FormEvent } from "react"
-import { Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import { Button } from "@/components/ui/button"
