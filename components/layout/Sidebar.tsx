@@ -94,6 +94,7 @@ export function Sidebar({
   const handleNavigateToAgentView = (view: "agents" | "my-rois" | "favorites") => {
     setActiveTab("apps")
     setActiveRoiView(view)
+    setShowRoiTool(true)
   }
 
   return (
