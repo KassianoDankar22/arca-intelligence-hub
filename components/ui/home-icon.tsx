@@ -1,8 +1,9 @@
 "use client"
 
-import React from "react"
-import type { Transition, Variants } from "framer-motion"
-import { motion, useAnimation } from "framer-motion"
+import type React from "react"
+
+import type { Transition, Variants } from "framer-motion" // Changed from 'motion/react' to 'framer-motion'
+import { motion, useAnimation } from "framer-motion" // Changed from 'motion/react' to 'framer-motion'
 import type { HTMLAttributes } from "react"
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react"
 import { cn } from "@/lib/utils"
@@ -67,11 +68,9 @@ const HomeIcon = forwardRef<HomeIconHandle, HomeIconProps>(
       },
       [controls, onMouseLeave],
     )
-
     return (
       <div className={cn(className)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
         <svg
-          {...props}
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -82,9 +81,9 @@ const HomeIcon = forwardRef<HomeIconHandle, HomeIconProps>(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <motion.polyline
-            points="9 22 9 12 15 12 15 22"
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <motion.path
+            d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
             variants={pathVariants}
             transition={defaultTransition}
             animate={controls}

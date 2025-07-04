@@ -1,7 +1,7 @@
 "use client"
 
-import React from "react"
-import { User } from 'lucide-react'
+import type React from "react"
+import { User } from "lucide-react"
 import type { Transition, Variants } from "framer-motion"
 import { motion, useAnimation } from "framer-motion"
 import type { HTMLAttributes } from "react"
@@ -71,7 +71,7 @@ const UserIcon = forwardRef<UserIconHandle, UserIconProps>(
 
     return (
       <div className={cn(className)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
-        <svg
+        <User
           {...props}
           xmlns="http://www.w3.org/2000/svg"
           width={size}
@@ -97,7 +97,7 @@ const UserIcon = forwardRef<UserIconHandle, UserIconProps>(
             transition={defaultTransition}
             animate={controls}
           />
-        </svg>
+        </User>
       </div>
     )
   },

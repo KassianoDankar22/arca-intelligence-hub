@@ -1,45 +1,53 @@
-import React from "react"
-import { cn } from "@/lib/utils"
-import { Slot } from "@radix-ui/react-slot"
+"use client"
 
-interface StarBorderProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
-  className?: string
+import type React from "react"
+
+import { cn } from "@/lib/utils"
+import type { ElementType, ComponentPropsWithoutRef } from "react"
+import { motion } from "framer-motion" // Import motion from framer-motion
+
+interface StarBorderProps<T extends ElementType> {
+  as?: T
   color?: string
-  as?: React.ElementType
+  speed?: string
+  className?: string
+  children: React.ReactNode
 }
 
-export function StarBorder({ children, className, color = "#000", as: Comp = "div", ...props }: StarBorderProps) {
+export function StarBorder<T extends ElementType = "button">({
+  as,
+  className,
+  color,
+  speed = "6s",
+  children,
+  ...props
+}: StarBorderProps<T> & Omit<ComponentPropsWithoutRef<T>, keyof StarBorderProps<T>>) {
+  const Component = as || "button"
+  const defaultColor = color || "hsl(var(--foreground))"
+
   return (
-    <Comp
-      className={cn(
-        "relative inline-flex items-center justify-center overflow-hidden rounded-xl p-px font-medium text-white transition-all duration-300 ease-in-out",
-        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background",
-        className,
-      )}
-      style={
-        {
-          "--star-color": color,
-        } as React.CSSProperties
-      }
-      {...props}
-    >
-      <span
+    <Component className={cn("relative inline-block py-[1px] overflow-hidden rounded-[20px]", className)} {...props}>
+      <motion.div // Use motion.div for animation
         className={cn(
-          "absolute inset-0 z-0",
-          "bg-[radial-gradient(circle_at_center,_var(--star-color)_0%,_transparent_70%)]",
-          "opacity-0 transition-opacity duration-500 group-hover:opacity-100",
-          "animate-star-pulse",
+          "absolute w-[300%] h-[50%] bottom-[-11px] right-[-250%] rounded-full animate-star-movement-bottom z-0",
+          "opacity-20 dark:opacity-70",
         )}
+        style={{
+          background: `radial-gradient(circle, ${defaultColor}, transparent 10%)`,
+          animationDuration: speed,
+        }}
       />
-      <span
+      <motion.div // Use motion.div for animation
         className={cn(
-          "relative z-10 flex h-full w-full items-center justify-center rounded-xl bg-slate-900 px-6 py-3 transition-all duration-300 ease-in-out",
-          "group-hover:bg-opacity-0",
+          "absolute w-[300%] h-[50%] top-[-10px] left-[-250%] rounded-full animate-star-movement-top z-0",
+          "opacity-20 dark:opacity-70",
         )}
-      >
-        {children}
-      </span>
-    </Comp>
+        style={{
+          background: `radial-gradient(circle, ${defaultColor}, transparent 10%)`,
+          animationDuration: speed,
+        }}
+      />
+      
+    </Component>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import type React from "react"
 import type { Variants } from "framer-motion"
 import { motion, useAnimation } from "framer-motion"
 import type { HTMLAttributes } from "react"
@@ -97,7 +97,6 @@ const CircleDollarSignIcon = forwardRef<CircleDollarSignIconHandle, CircleDollar
     return (
       <div className={cn(className)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} {...props}>
         <svg
-          {...props}
           xmlns="http://www.w3.org/2000/svg"
           width={size}
           height={size}
@@ -115,7 +114,7 @@ const CircleDollarSignIcon = forwardRef<CircleDollarSignIconHandle, CircleDollar
             animate={controls}
             variants={dollarMainVariants}
           />
-          <motion.path d="M12 3v18" initial="normal" animate={controls} variants={dollarSecondaryVariants} />
+          <motion.path d="M12 18V6" initial="normal" animate={controls} variants={dollarSecondaryVariants} />
         </svg>
       </div>
     )

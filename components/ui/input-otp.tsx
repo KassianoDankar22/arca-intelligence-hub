@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { OTPInput, Slot, OTPInputContext } from "input-otp"
-import { Minus } from 'lucide-react'
+import { OTPInput, OTPInputContext } from "input-otp"
+import { Dot } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -23,45 +23,47 @@ const InputOTP = React.forwardRef<
 InputOTP.displayName = "InputOTP"
 
 const InputOTPGroup = React.forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot>
+  React.ElementRef<"div">,
+  React.ComponentPropsWithoutRef<"div">
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("flex items-center", className)} {...props} />
 ))
 InputOTPGroup.displayName = "InputOTPGroup"
 
 const InputOTPSlot = React.forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot> & { index: number }
+  React.ElementRef<"div">,
+  React.ComponentPropsWithoutRef<"div"> & { index: number }
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
-  const { char, has } = inputOTPContext.slots[index]
+  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
 
   return (
-    <Slot
+    <div
       ref={ref}
       className={cn(
-        "relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
-        has && "z-10 ring-offset-background focus:ring-2 focus:ring-ring",
+        "relative flex h-10 w-10 items-center justify-center border-y border-r border-input text-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
+        isActive && "z-10 ring-2 ring-ring ring-offset-background",
         className
       )}
       {...props}
     >
       {char}
-      {has && (
-        <div className="absolute inset-0 pointer-events-none bg-white dark:bg-gray-950" />
+      {hasFakeCaret && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="h-4 w-px animate-caret-blink bg-foreground duration-1000" />
+        </div>
       )}
-    </Slot>
+    </div>
   )
 })
 InputOTPSlot.displayName = "InputOTPSlot"
 
 const InputOTPSeparator = React.forwardRef<
-  React.ElementRef<typeof Minus>,
-  React.ComponentPropsWithoutRef<typeof Minus>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex items-center justify-center", className)} {...props}>
-    <Minus />
+  React.ElementRef<"div">,
+  React.ComponentPropsWithoutRef<"div">
+>(({ ...props }, ref) => (
+  <div ref={ref} role="separator" {...props}>
+    <Dot />
   </div>
 ))
 InputOTPSeparator.displayName = "InputOTPSeparator"
