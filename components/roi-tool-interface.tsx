@@ -30,6 +30,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { StarBorder } from "@/components/ui/star-border"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
 
@@ -1830,9 +1831,9 @@ export default function RoiToolInterface({
 
                     {/* Submit Button */}
                     <div className="pt-4">
-                      <Button type="submit" className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl">
+                      <StarBorder as="button" type="submit" className="w-full h-12" color="#3B82F6">
                         Gerar Análise de ROI
-                      </Button>
+                      </StarBorder>
                     </div>
                     <div className="mt-4 text-center text-xs font-extralight text-slate-500">
                       Os dados gerados pela Arca AI são estimativas para auxiliar sua análise. Confira informações
