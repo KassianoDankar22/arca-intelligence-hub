@@ -1,9 +1,13 @@
 "use client"
 
+// React Imports
 import type React from "react"
-
 import { useEffect, useState } from "react"
+
+// Third-Party Imports
 import { motion, AnimatePresence } from "framer-motion"
+
+// Lucide React Icons
 import {
   Bell,
   Menu,
@@ -28,13 +32,15 @@ import {
   LayoutGrid,
 } from "lucide-react"
 
+// Shadcn UI Components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BackgroundBeams } from "@/components/ui/background-beams"
 import { StarBorder } from "@/components/ui/star-border"
+
+// Custom Components
 import { CRMDashboard } from "@/components/crm/CRMDashboard"
 import { LeadsTable } from "@/components/crm/LeadsTable"
 import { PipelineView } from "@/components/crm/PipelineView"
@@ -43,12 +49,15 @@ import { Sidebar } from "@/components/layout/Sidebar"
 import { AgentsHub } from "@/components/agents/AgentsHub"
 import { FinancialDashboard } from "@/components/financial/FinancialDashboard"
 
-// Definir interface para Compromisso
+// Utility Imports
+import { cn } from "@/lib/utils"
+
+// Interfaces
 interface Appointment {
   id: number
   title: string
-  date: string // Formato YYYY-MM-DD
-  time: string // Formato HH:MM
+  date: string
+  time: string
   type: string
   relatedLead: string
   reminder: string
@@ -56,7 +65,6 @@ interface Appointment {
   notes: string
 }
 
-// Definir interface para Lead
 interface Lead {
   id: number
   nome: string
@@ -71,7 +79,7 @@ interface Lead {
   observacoes?: string
 }
 
-// Sample data for apps
+// Dados dos agentes disponíveis
 const apps = [
   {
     name: "PixelMaster",
@@ -201,7 +209,7 @@ const apps = [
   },
 ]
 
-// Sample data for recent files
+// Dados de arquivos recentes (não utilizados atualmente)
 const recentFiles = [
   {
     name: "Brand Redesign.pxm",
@@ -268,7 +276,7 @@ const recentFiles = [
   },
 ]
 
-// Sample data for projects
+// Dados de projetos (não utilizados atualmente)
 const projects = [
   {
     name: "Website Redesign",
@@ -304,7 +312,7 @@ const projects = [
   },
 ]
 
-// Sample data for tutorials
+// Dados de tutoriais (não utilizados atualmente)
 const tutorials = [
   {
     title: "Mastering Digital Illustration",
@@ -353,7 +361,7 @@ const tutorials = [
   },
 ]
 
-// Sample data for community posts
+// Dados da comunidade (não utilizados atualmente)
 const communityPosts = [
   {
     title: "Minimalist Logo Design",
@@ -393,6 +401,7 @@ export function DesignaliCreative() {
   const [notification, setNotification] = useState("")
   const [greetingPrefix, setGreetingPrefix] = useState("")
 
+  // Definir saudação baseada no horário
   useEffect(() => {
     const currentHour = new Date().getHours()
     if (currentHour >= 5 && currentHour < 12) {
@@ -417,7 +426,7 @@ export function DesignaliCreative() {
   const [activeCrmTab, setActiveCrmTab] = useState("dashboard")
   const [showReportModal, setShowReportModal] = useState(false)
 
-  // New states for Financial module
+  // Estados do módulo Financeiro
   const [activeFinancialTab, setActiveFinancialTab] = useState("overview")
   const [showNewTransactionModal, setShowNewTransactionModal] = useState(false)
 
@@ -570,7 +579,7 @@ export function DesignaliCreative() {
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null)
   const [dragOverColumn, setDragOverColumn] = useState("")
 
-  // Função para gerar dados do relatório
+  // Gerar dados do relatório
   const generateReportData = () => {
     const totalLeads = leadsList.length
     const leadsPorStatus = {
@@ -610,7 +619,7 @@ export function DesignaliCreative() {
     }
   }
 
-  // Função para atualizar o status do lead
+  // Atualizar status do lead
   const updateLeadStatus = (leadId: number, newStatus: string) => {
     setLeadsList((prev) => prev.map((lead) => (lead.id === leadId ? { ...lead, status: newStatus } : lead)))
 
@@ -620,13 +629,13 @@ export function DesignaliCreative() {
     setTimeout(() => setNotification(""), 3000)
   }
 
-  // Simulate progress loading
+  // Simular carregamento de progresso
   useEffect(() => {
     const timer = setTimeout(() => setProgress(100), 1000)
     return () => clearTimeout(timer)
   }, [])
 
-  // useEffect para simular expiração de ROIs
+  // Simular expiração de ROIs
   useEffect(() => {
     const interval = setInterval(
       () => {
@@ -705,7 +714,7 @@ export function DesignaliCreative() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* Animated gradient background */}
+      {/* Background animado com gradiente */}
       <motion.div
         className="absolute inset-0 -z-10 opacity-20"
         animate={{
@@ -732,7 +741,7 @@ export function DesignaliCreative() {
         setActiveRoiView={setActiveRoiView}
       />
 
-      {/* Main Content */}
+      {/* Conteúdo Principal */}
       <div className={cn("min-h-screen transition-all duration-300 ease-in-out", sidebarOpen ? "md:pl-64" : "md:pl-0")}>
         <header className="sticky top-0 z-10 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
@@ -926,12 +935,11 @@ export function DesignaliCreative() {
                       </button>
                       <button
                         onClick={() => setActiveCrmTab("pipeline")}
-                        className={`px-4 py-2 rounded-md text-sm=>setActiveCrmTab("pipeline")}
-                      className={\`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeCrmTab === "pipeline"
-                          ? "bg-white text-blue-600 shadow-sm"
-                          : "text-gray-600 hover:text-blue-600"
-                      }`}
+                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                          activeCrmTab === "pipeline"
+                            ? "bg-white text-blue-600 shadow-sm"
+                            : "text-gray-600 hover:text-blue-600"
+                        }`}
                       >
                         Pipeline
                       </button>
@@ -950,18 +958,18 @@ export function DesignaliCreative() {
                     {activeCrmTab === "dashboard" && (
                       <CRMDashboard
                         leadsList={leadsList}
-                        searchTerm={""} // searchTerm is now managed by LeadsTable
-                        setSearchTerm={() => {}} // setSearchTerm is now managed by LeadsTable
-                        statusFilter={""} // statusFilter is now managed by LeadsTable
-                        setStatusFilter={() => {}} // setStatusFilter is now managed by LeadsTable
-                        sourceFilter={""} // sourceFilter isC now managed by LeadsTable
-                        setSourceFilter={() => {}} // setSourceFilter is now managed by LeadsTable
-                        temperaturaFilter={""} // temperaturaFilter is now managed by LeadsTable
-                        setTemperaturaFilter={() => {}} // setTemperaturaFilter is now managed by LeadsTable
-                        handleViewLead={() => {}} // handleViewLead is now managed by LeadsTable
-                        handleEditLead={() => {}} // handleEditLead is now managed by LeadsTable
-                        handleCallLead={() => {}} // handleCallLead is now managed by LeadsTable
-                        handleEmailLead={() => {}} // handleEmailLead is now managed by LeadsTable
+                        searchTerm={""}
+                        setSearchTerm={() => {}}
+                        statusFilter={""}
+                        setStatusFilter={() => {}}
+                        sourceFilter={""}
+                        setSourceFilter={() => {}}
+                        temperaturaFilter={""}
+                        setTemperaturaFilter={() => {}}
+                        handleViewLead={() => {}}
+                        handleEditLead={() => {}}
+                        handleCallLead={() => {}}
+                        handleEmailLead={() => {}}
                         updateLeadStatus={updateLeadStatus}
                       />
                     )}

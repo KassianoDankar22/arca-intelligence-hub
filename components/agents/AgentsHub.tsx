@@ -20,8 +20,8 @@ interface AgentsHubProps {
   setSavedROIs: React.Dispatch<React.SetStateAction<any[]>>
   favoriteAgents: string[]
   setFavoriteAgents: React.Dispatch<React.SetStateAction<string[]>>
-  apps: any[] // The apps array from creative.tsx
-  setActiveTab: (tab: string) => void // To allow AgentsHub to change the main tab
+  apps: any[]
+  setActiveTab: (tab: string) => void
 }
 
 export function AgentsHub({
