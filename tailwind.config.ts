@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss"
-const flattenColorPalette = require("tailwindcss/lib/util/flattenColorPalette")
+import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette"
 
 // Função para adicionar variáveis CSS para todas as cores do Tailwind
 function addVariablesForColors({ addBase, theme }: any) {
